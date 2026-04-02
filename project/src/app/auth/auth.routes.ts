@@ -3,7 +3,7 @@ import { guestGuard } from '../shared/guards/guest.guard';
 
 export const AUTH_ROUTES: Routes = [
   {
-    path: 'login',
+    path: '',
     loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent),
     canActivate: [guestGuard]
   },
@@ -13,8 +13,8 @@ export const AUTH_ROUTES: Routes = [
     canActivate: [guestGuard]
   },
   {
-    path: '',
-    redirectTo: 'login',
+    path: 'login',
+    redirectTo: '',
     pathMatch: 'full'
   }
 ];

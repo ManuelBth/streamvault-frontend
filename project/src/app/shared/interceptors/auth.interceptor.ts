@@ -1,15 +1,15 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { AppStore } from '../store/app.store';
+import { TokenService } from '../../auth/services/token.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const store = inject(AppStore);
-  const user = store.currentUser();
+  const tokenService = inject(TokenService);
+  const token = tokenService.getToken();
 
-  if (user) {
+  if (token) {
     const authReq = req.clone({
       setHeaders: {
-        Authorization: `Bearer ${user.id}`
+        Authorization: `Bearer ${token}`
       }
     });
     return next(authReq);

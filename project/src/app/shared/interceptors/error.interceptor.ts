@@ -1,11 +1,8 @@
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { AppStore } from '../store/app.store';
 import { catchError, throwError } from 'rxjs';
+import { addNotification } from '../store/app.store';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
-  const store = inject(AppStore);
-
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       let errorMessage = 'An unexpected error occurred';
@@ -33,7 +30,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           errorMessage = error.message || 'An error occurred';
       }
 
-      store.addNotification({
+      addNotification({
         id: crypto.randomUUID(),
         title: 'Error',
         message: errorMessage,
