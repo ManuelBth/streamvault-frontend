@@ -13,6 +13,8 @@ module.exports = {
         "sv-text": "#FFFFFF",
         "sv-muted": "#B3B3B3",
         "sv-border": "#333333",
+        "sv-primary": "#E50914",
+        "sv-primary-hover": "#B20710",
       },
       fontFamily: {
         sans: ["Arial", "Helvetica", "sans-serif"],

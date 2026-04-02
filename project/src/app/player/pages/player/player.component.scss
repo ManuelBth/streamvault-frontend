@@ -1,0 +1,56 @@
+.player-container {
+  &:fullscreen {
+    background-color: #000;
+  }
+  
+  &:fullscreen video {
+    object-fit: contain;
+  }
+}
+
+input[type="range"] {
+  &::-webkit-slider-runnable-track {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 9999px;
+    height: 4px;
+  }
+  
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: #E50914;
+    border-radius: 9999px;
+    margin-top: -4px;
+    cursor: pointer;
+  }
+  
+  &::-moz-range-track {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 9999px;
+    height: 4px;
+  }
+  
+  &::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    background: #E50914;
+    border-radius: 9999px;
+    border: none;
+    cursor: pointer;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
