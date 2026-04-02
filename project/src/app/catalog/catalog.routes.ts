@@ -6,12 +6,8 @@ export const CATALOG_ROUTES: Routes = [
     loadComponent: () => import('./pages/catalog/catalog.component').then(m => m.CatalogComponent)
   },
   {
-    path: 'movie/:id',
-    loadComponent: () => import('./pages/movie-detail/movie-detail.component').then(m => m.MovieDetailComponent)
-  },
-  {
-    path: 'series/:id',
-    loadComponent: () => import('./pages/series-detail/series-detail.component').then(m => m.SeriesDetailComponent)
+    path: ':id',
+    loadComponent: () => import('./pages/content-detail/content-detail.component').then(m => m.ContentDetailComponent)
   },
   {
     path: 'search',

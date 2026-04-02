@@ -13,7 +13,7 @@ import type { User } from '../../shared/models';
 export class AuthService {
   private http = inject(HttpClient);
   private tokenService = inject(TokenService);
-  private readonly apiUrl = `${environment.apiUrl}/api/v1`;
+  private readonly apiUrl = environment.apiUrl; // Ya incluye /api/v1
 
   initializeAuth(): Observable<User | null> {
     const token = this.tokenService.getToken();

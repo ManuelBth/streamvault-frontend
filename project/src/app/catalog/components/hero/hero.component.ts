@@ -1,0 +1,101 @@
+import { Component, output, input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+import { Content } from '../../models/content.model';
+import { getThumbnailUrl, getBackdropUrl } from '../../../shared/utils/minio-url';
+
+@Component({
+  selector: 'app-hero',
+  standalone: true,
+  imports: [CommonModule],
+  template: `
+    <div 
+      class="relative h-[60vh] md:h-[70vh] w-full overflow-hidden"
+      [style.backgroundImage]="'url(' + backdropUrl() + ')'"
+      [style.backgroundSize]="'cover'"
+      [style.backgroundPosition]="'center top'"
+    >
+      <!-- Gradient overlay -->
+      <div class="absolute inset-0 bg-gradient-to-t from-sv-black via-sv-black/50 to-transparent"></div>
+
+      <!-- Content -->
+      <div class="absolute bottom-0 left-0 right-0 p-4 md:p-8 pb-16">
+        <div class="max-w-3xl">
+          <!-- Tipo de contenido -->
+          <span class="text-sv-red text-sm font-semibold uppercase tracking-wider">
+            {{ content().type === 'MOVIE' ? 'Película' : 'Serie' }}
+          </span>
+
+          <!-- Título -->
+          <h1 class="text-3xl md:text-5xl font-bold text-sv-text mt-2 mb-4">
+            {{ content().title }}
+          </h1>
+
+          <!-- Metadatos -->
+          <div class="flex items-center gap-3 text-sv-muted text-sm mb-4">
+            <span>{{ content().releaseYear }}</span>
+            <span class="text-sv-border">|</span>
+            <span>{{ content().rating }}</span>
+            @if (content().genres && content().genres.length) {
+              <span class="text-sv-border">|</span>
+              <span>{{ content().genres[0].name }}</span>
+            }
+          </div>
+
+          <!-- Descripción -->
+          <p class="text-sv-text text-sm md:text-base line-clamp-2 md:line-clamp-3 mb-6">
+            {{ content().description }}
+          </p>
+
+          <!-- Botones de acción -->
+          <div class="flex gap-4">
+            <button
+              (click)="onPlay.emit(content())"
+              class="bg-sv-red hover:bg-sv-red-hover text-white px-6 py-3 
+                     rounded font-semibold flex items-center gap-2 transition-colors"
+            >
+              <span>▶</span>
+              Reproducir
+            </button>
+            <button
+              (click)="onSelect.emit(content())"
+              class="bg-sv-card hover:bg-sv-border text-sv-text px-6 py-3 
+                     rounded font-semibold flex items-center gap-2 transition-colors"
+            >
+              <span>ℹ</span>
+              Más información
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `,
+  styles: [`
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .line-clamp-3 {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  `]
+})
+export class HeroComponent {
+  // Signal input (Angular 17.1+)
+  content = input.required<Content>();
+
+  // Signal outputs (Angular 17.1+)
+  onPlay = output<Content>();
+  onSelect = output<Content>();
+
+  backdropUrl = () => {
+    const url = getBackdropUrl(this.content()?.thumbnailKey);
+    console.log('[Hero] backdropUrl:', url);
+    return url;
+  };
+}
