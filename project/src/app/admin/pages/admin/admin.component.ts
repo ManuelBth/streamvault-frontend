@@ -3,6 +3,6 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'app-admin',
   standalone: true,
-  template: '<div class="p-8">Admin Page</div>'
+  templateUrl: './admin.component.html'
 })
 export class AdminComponent {}

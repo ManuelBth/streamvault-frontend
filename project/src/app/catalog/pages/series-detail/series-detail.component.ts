@@ -3,6 +3,6 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'app-series-detail',
   standalone: true,
-  template: '<div class="p-8">Series Detail Page</div>'
+  templateUrl: './series-detail.component.html'
 })
 export class SeriesDetailComponent {}

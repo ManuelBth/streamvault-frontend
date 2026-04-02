@@ -6,19 +6,38 @@ import { AuthLayoutComponent } from './shared/layout/auth-layout.component';
 import { MainLayoutComponent } from './shared/layout/main-layout.component';
 
 export const routes: Routes = [
-  // ── Públicas (Guest only) ─────────────────────────────────
+  // ── Públicas (Guest only) - with auth prefix ────────────────
   {
-    path: '',
-    loadComponent: () => import('./auth/pages/login/login.component').then(m => m.LoginComponent),
-    canActivate: [guestGuard]
-  },
-  {
-    path: 'register',
-    loadComponent: () => import('./auth/pages/register/register.component').then(m => m.RegisterComponent),
-    canActivate: [guestGuard]
+    path: 'auth',
+    component: AuthLayoutComponent,
+    canActivate: [guestGuard],
+    children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'login'
+      },
+      {
+        path: 'login',
+        loadComponent: () => import('./auth/pages/login/login.component').then(m => m.LoginComponent),
+        title: 'Iniciar Sesión | StreamVault'
+      },
+      {
+        path: 'register',
+        loadComponent: () => import('./auth/pages/register/register.component').then(m => m.RegisterComponent),
+        title: 'Registrarse | StreamVault'
+      }
+    ]
   },
 
-  // ── Usuario autenticado (MainLayout) ──────────────────────
+  // ── Raíz: redirect to catalog (authenticated) ───────────────
+  {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: 'catalog'
+  },
+
+  // ── Usuario autenticado (MainLayout) ───────────────────────
   {
     path: '',
     component: MainLayoutComponent,
@@ -35,16 +54,12 @@ export const routes: Routes = [
       {
         path: 'profile',
         loadChildren: () => import('./profile/profile.routes').then(m => m.PROFILE_ROUTES)
+      },
+      {
+        path: 'contact',
+        loadChildren: () => import('./contact/contact.routes').then(m => m.CONTACT_ROUTES)
       }
     ]
-  },
-
-  // ── Contact (auth required per PRD) ───────────────────────
-  {
-    path: 'contact',
-    component: MainLayoutComponent,
-    canActivate: [authGuard],
-    loadChildren: () => import('./contact/contact.routes').then(m => m.CONTACT_ROUTES)
   },
 
   // ── Admin ─────────────────────────────────────────────────
@@ -55,7 +70,7 @@ export const routes: Routes = [
     loadChildren: () => import('./admin/admin.routes').then(m => m.ADMIN_ROUTES)
   },
 
-  // ── Fallback ──────────────────────────────────────────────
+  // ── Fallback ───────────────────────────────────────────────
   {
     path: '**',
     redirectTo: 'catalog'

@@ -3,6 +3,7 @@ import { Injectable, signal, computed } from '@angular/core';
 @Injectable({ providedIn: 'root' })
 export class TokenService {
   private readonly TOKEN_KEY = 'auth_token';
+  private readonly REFRESH_TOKEN_KEY = 'refresh_token';
 
   getToken(): string | null {
     if (typeof window === 'undefined') return null;
@@ -14,9 +15,20 @@ export class TokenService {
     localStorage.setItem(this.TOKEN_KEY, token);
   }
 
+  getRefreshToken(): string | null {
+    if (typeof window === 'undefined') return null;
+    return localStorage.getItem(this.REFRESH_TOKEN_KEY);
+  }
+
+  setRefreshToken(token: string): void {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem(this.REFRESH_TOKEN_KEY, token);
+  }
+
   clearToken(): void {
     if (typeof window === 'undefined') return;
     localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.REFRESH_TOKEN_KEY);
   }
 
   isExpired(): boolean {

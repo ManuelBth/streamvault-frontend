@@ -1,47 +1,66 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, switchMap, of } from 'rxjs';
 import { TokenService } from './token.service';
-import { currentUser, setCurrentUser, User } from '../../shared/store/app.store';
+import { setCurrentUser } from '../../shared/store/app.store';
 import { environment } from '../../../environments/environment';
 
-export interface LoginRequest {
-  username: string;
-  password: string;
-}
-
-export interface RegisterRequest {
-  username: string;
-  email: string;
-  password: string;
-}
-
-export interface AuthResponse {
-  token: string;
-  user: User;
-}
+// Importar tipos del models folder (auth-specific)
+import type { LoginRequest, RegisterRequest, AuthResponse } from '../models';
+import type { User } from '../../shared/models';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private http = inject(HttpClient);
   private tokenService = inject(TokenService);
-  private readonly apiUrl = `${environment.apiUrl}/api/v1/auth`;
+  private readonly apiUrl = `${environment.apiUrl}/api/v1`;
 
-  login(credentials: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
-      tap(response => {
-        this.tokenService.setToken(response.token);
-        setCurrentUser(response.user);
+  initializeAuth(): Observable<User | null> {
+    const token = this.tokenService.getToken();
+    if (!token || this.tokenService.isExpired()) {
+      this.tokenService.clearToken();
+      setCurrentUser(null);
+      return of(null);
+    }
+
+    return this.http.get<User>(`${this.apiUrl}/users/me`).pipe(
+      tap({
+        next: (user) => setCurrentUser(user),
+        error: () => {
+          this.tokenService.clearToken();
+          setCurrentUser(null);
+        }
       })
     );
   }
 
-  register(data: RegisterRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, data).pipe(
+  login(credentials: LoginRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/login`, credentials).pipe(
       tap(response => {
-        this.tokenService.setToken(response.token);
-        setCurrentUser(response.user);
-      })
+        this.tokenService.setToken(response.accessToken);
+        this.tokenService.setRefreshToken(response.refreshToken);
+      }),
+      switchMap(response => 
+        this.http.get<User>(`${this.apiUrl}/users/me`).pipe(
+          tap(user => setCurrentUser(user)),
+          switchMap(() => of(response))
+        )
+      )
+    );
+  }
+
+  register(data: RegisterRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/register`, data).pipe(
+      tap(response => {
+        this.tokenService.setToken(response.accessToken);
+        this.tokenService.setRefreshToken(response.refreshToken);
+      }),
+      switchMap(response => 
+        this.http.get<User>(`${this.apiUrl}/users/me`).pipe(
+          tap(user => setCurrentUser(user)),
+          switchMap(() => of(response))
+        )
+      )
     );
   }
 
@@ -55,6 +74,6 @@ export class AuthService {
   }
 
   refreshToken(): Observable<{ token: string }> {
-    return this.http.post<{ token: string }>(`${this.apiUrl}/refresh`, {});
+    return this.http.post<{ token: string }>(`${this.apiUrl}/auth/refresh`, {});
   }
 }
