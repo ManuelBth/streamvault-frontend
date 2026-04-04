@@ -1,3 +1,5 @@
+import { inject } from '@angular/core';
+import { NotificationService } from '../services/notification.service';
 import { signal, computed } from '@angular/core';
 import { User, Profile, Notification } from '../models';
 
@@ -10,7 +12,7 @@ export const searchQuery = signal<string>('');
 export const isAuthenticated = computed(() => currentUser() !== null);
 export const isAdmin = computed(() => currentUser()?.role === 'ADMIN');
 export const unreadCount = computed(() => 
-  notifications().filter(n => !n.read).length
+  notifications().filter(n => !n.isRead).length
 );
 
 export function setCurrentUser(user: User | null): void {
@@ -29,16 +31,33 @@ export function setSearchQuery(query: string): void {
   searchQuery.set(query);
 }
 
+export function setNotifications(list: Notification[]): void {
+  notifications.set(list);
+}
+
 export function addNotification(notification: Notification): void {
   notifications.update(list => [notification, ...list]);
 }
 
 export function markNotificationRead(id: string): void {
   notifications.update(list =>
-    list.map(n => n.id === id ? { ...n, read: true } : n)
+    list.map(n => n.id === id ? { ...n, isRead: true } : n)
+  );
+}
+
+export function markAllNotificationsRead(): void {
+  notifications.update(list =>
+    list.map(n => ({ ...n, isRead: true }))
   );
 }
 
 export function clearNotifications(): void {
   notifications.set([]);
+}
+
+export function syncWithNotificationService(): void {
+  const notificationService = inject(NotificationService);
+  
+  notificationService.loadAll();
+  notificationService.loadUnreadCount();
 }

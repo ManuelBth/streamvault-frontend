@@ -18,8 +18,6 @@ export class HeroComponent {
   onSelect = output<Content>();
 
   backdropUrl = () => {
-    const url = getBackdropUrl(this.content()?.thumbnailKey);
-    console.log('[Hero] backdropUrl:', url);
-    return url;
+    return getBackdropUrl(this.content()?.thumbnailKey);
   };
 }

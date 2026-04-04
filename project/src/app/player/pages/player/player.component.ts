@@ -28,14 +28,11 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   episodeId = signal<string>('');
 
   ngOnInit(): void {
-    console.log('[Player] ngOnInit called');
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
-      console.log('[Player] contentId:', id);
       if (id) {
         this.contentId.set(id);
         const episode = params.get('episodeId');
-        console.log('[Player] episodeId:', episode);
         if (episode) {
           this.episodeId.set(episode);
           this.loadEpisodeStream(id, episode);
@@ -43,7 +40,6 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
           this.loadStream(id);
         }
       } else {
-        console.warn('[Player] No contentId found in route params');
         this.controls.setError('No se encontró el ID del contenido');
       }
     });
@@ -75,20 +71,16 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private loadStream(contentId: string): void {
-    console.log('[Player] loadStream called with contentId:', contentId);
     this.controls.setLoading();
     this.streamService.loadStreamUrl(contentId);
     
     const checkInterval = setInterval(() => {
-      console.log('[Player] Checking stream state...', this.streamService.streamUrl());
       const state = this.streamService.streamUrl();
       if (state.state === 'success' && state.data?.url) {
         clearInterval(checkInterval);
-        console.log('[Player] Stream URL received:', state.data.url);
         this.initializeHls(state.data.url);
       } else if (state.state === 'error') {
         clearInterval(checkInterval);
-        console.error('[Player] Stream error:', state.error);
         this.controls.setError(state.error || 'Failed to load stream');
       }
     }, 100);
@@ -111,15 +103,11 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private initializeHls(streamUrl: string): void {
-    console.log('[Player] initializeHls called with URL:', streamUrl);
-    
     let fixedUrl = streamUrl;
     const bucketName = 'streamvault-videos';
     const doubleBucket = `${bucketName}/${bucketName}/`;
     if (streamUrl.includes(doubleBucket)) {
-      console.log('[Player] Fixing duplicated bucket name in URL');
       fixedUrl = streamUrl.replace(doubleBucket, `${bucketName}/`);
-      console.log('[Player] Fixed URL:', fixedUrl);
     }
     
     const video = this.videoElementRef?.nativeElement;
@@ -134,12 +122,10 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
       this.hls.loadSource(fixedUrl);
       this.hls.attachMedia(video);
       this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        console.log('[Player] HLS manifest parsed, starting playback');
         this.controls.setPaused();
         video.play().catch(() => this.controls.setPaused());
       });
       this.hls.on(Hls.Events.ERROR, (event, data) => {
-        console.error('[Player] HLS error:', data);
         if (data.fatal) {
           this.controls.setError('Failed to load video stream');
         }

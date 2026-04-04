@@ -1,1 +1,204 @@
-<div class="p-8">Settings Page</div>
+<div class="p-6 max-w-4xl mx-auto space-y-8">
+  <!-- Header -->
+  <div class="border-b border-gray-800 pb-4">
+    <h1 class="text-2xl font-bold text-white">Settings</h1>
+    <p class="text-gray-400 mt-1">Manage your account and preferences</p>
+  </div>
+
+  <!-- User Profile Section -->
+  <section class="bg-gray-900/50 rounded-lg p-6">
+    <h2 class="text-xl font-semibold text-white mb-4">Profile Information</h2>
+    
+    @if (userLoading()) {
+      <div class="flex items-center justify-center py-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
+      </div>
+    } @else if (userError()) {
+      <div class="bg-red-900/30 border border-red-600 rounded-lg p-4 text-red-400">
+        {{ userError() }}
+      </div>
+    } @else if (user()) {
+      <div class="grid gap-6">
+        <!-- Display Mode -->
+        @if (!editName() && !editEmail()) {
+          <div class="grid gap-4">
+            <div class="flex items-center">
+              <span class="text-gray-400 w-24">Name:</span>
+              <span class="text-white">{{ user()?.name }}</span>
+            </div>
+            <div class="flex items-center">
+              <span class="text-gray-400 w-24">Email:</span>
+              <span class="text-white">{{ user()?.email }}</span>
+            </div>
+            <div class="flex items-center">
+              <span class="text-gray-400 w-24">Role:</span>
+              <span class="text-white capitalize">{{ user()?.role?.toLowerCase() }}</span>
+            </div>
+            <button 
+              (click)="startEdit()"
+              class="mt-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors w-fit"
+            >
+              Edit Profile
+            </button>
+          </div>
+        } @else {
+          <!-- Edit Mode -->
+          <div class="grid gap-4">
+            <div>
+              <label class="block text-gray-400 text-sm mb-1">Name</label>
+              <input 
+                type="text" 
+                [(ngModel)]="editName"
+                class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:border-red-600"
+              />
+            </div>
+            <div>
+              <label class="block text-gray-400 text-sm mb-1">Email</label>
+              <input 
+                type="email" 
+                [(ngModel)]="editEmail"
+                class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:border-red-600"
+              />
+            </div>
+            <div class="flex gap-3">
+              <button 
+                (click)="saveProfile()"
+                [disabled]="updating()"
+                class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors disabled:opacity-50"
+              >
+                {{ updating() ? 'Saving...' : 'Save' }}
+              </button>
+              <button 
+                (click)="cancelEdit()"
+                class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </section>
+
+  <!-- Subscription Section -->
+  <section class="bg-gray-900/50 rounded-lg p-6">
+    <h2 class="text-xl font-semibold text-white mb-4">Subscription</h2>
+    
+    @if (subLoading()) {
+      <div class="flex items-center justify-center py-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
+      </div>
+    } @else if (subError()) {
+      <div class="bg-red-900/30 border border-red-600 rounded-lg p-4 text-red-400">
+        {{ subError() }}
+      </div>
+    } @else if (subscription()) {
+      <!-- Active Subscription -->
+      <div class="grid gap-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="text-gray-400">Status: </span>
+            @if (subscription()?.active) {
+              <span class="text-green-400 font-medium">Active</span>
+            } @else {
+              <span class="text-red-400 font-medium">Inactive</span>
+            }
+          </div>
+        </div>
+        <div class="flex items-center">
+          <span class="text-gray-400 w-24">Plan:</span>
+          <span class="text-white font-medium" [class]="getPlanColor(subscription()?.plan || '')">
+            {{ subscription()?.plan }}
+          </span>
+        </div>
+        <div class="flex items-center">
+          <span class="text-gray-400 w-24">Started:</span>
+          <span class="text-white">{{ formatDate(subscription()?.startedAt || '') }}</span>
+        </div>
+        <div class="flex items-center">
+          <span class="text-gray-400 w-24">Expires:</span>
+          <span class="text-white">{{ formatDate(subscription()?.expiresAt || '') }}</span>
+        </div>
+      </div>
+    } @else {
+      <!-- No Subscription -->
+      <div class="text-center py-6">
+        <p class="text-gray-400 mb-4">You don't have an active subscription</p>
+        <button 
+          (click)="purchaseSubscription()"
+          [disabled]="purchaseLoading()"
+          class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-md font-medium transition-colors disabled:opacity-50"
+        >
+          {{ purchaseLoading() ? 'Processing...' : 'Purchase Subscription' }}
+        </button>
+      </div>
+    }
+  </section>
+
+  <!-- Notifications Section -->
+  <section class="bg-gray-900/50 rounded-lg p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl font-semibold text-white">Notifications</h2>
+      @if (unreadCount() > 0) {
+        <span class="bg-red-600 text-white text-xs px-2 py-1 rounded-full">
+          {{ unreadCount() }} unread
+        </span>
+      }
+    </div>
+    
+    @if (notifLoading()) {
+      <div class="flex items-center justify-center py-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
+      </div>
+    } @else if (notifError()) {
+      <div class="bg-red-900/30 border border-red-600 rounded-lg p-4 text-red-400">
+        {{ notifError() }}
+      </div>
+    } @else if (notifications().length > 0) {
+      <div class="space-y-3">
+        @for (notif of notifications(); track notif.id) {
+          <div 
+            class="flex items-start gap-3 p-3 rounded-lg bg-gray-800/50"
+            [class.opacity-60]="notif.isRead"
+          >
+            <span 
+              class="text-lg"
+              [class.text-green-400]="notif.type === 'success'"
+              [class.text-yellow-400]="notif.type === 'warning'"
+              [class.text-red-400]="notif.type === 'error'"
+              [class.text-blue-400]="notif.type === 'info'"
+            >
+              {{ getNotifIcon(notif.type) }}
+            </span>
+            <div class="flex-1 min-w-0">
+              <p class="text-white font-medium">{{ notif.title }}</p>
+              <p class="text-gray-400 text-sm truncate">{{ notif.message }}</p>
+              <p class="text-gray-500 text-xs mt-1">{{ formatDate(notif.createdAt) }}</p>
+            </div>
+            @if (!notif.isRead) {
+              <button 
+                (click)="markAsRead(notif.id)"
+                [disabled]="markReadLoading() === notif.id"
+                class="text-gray-400 hover:text-white text-sm transition-colors disabled:opacity-50"
+              >
+                Mark read
+              </button>
+            }
+          </div>
+        }
+        
+        @if (unreadCount() > 0) {
+          <button 
+            (click)="markAllAsRead()"
+            class="mt-4 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md transition-colors text-sm"
+          >
+            Mark all as read
+          </button>
+        }
+      </div>
+    } @else {
+      <p class="text-gray-400 text-center py-6">No notifications</p>
+    }
+  </section>
+</div>

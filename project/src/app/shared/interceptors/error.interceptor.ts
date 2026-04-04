@@ -35,8 +35,8 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         title: 'Error',
         message: errorMessage,
         type: 'error',
-        read: false,
-        createdAt: new Date()
+        isRead: false,
+        createdAt: new Date().toISOString()
       });
 
       return throwError(() => new Error(errorMessage));

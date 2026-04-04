@@ -1,1 +1,110 @@
-<div class="p-8">Profile Page</div>
+<div class="p-8 max-w-4xl mx-auto">
+  <!-- Header -->
+  <div class="border-b border-gray-800 pb-4 mb-8">
+    <h1 class="text-3xl font-bold text-white">My Profile</h1>
+    <p class="text-gray-400 mt-1">Manage your account</p>
+  </div>
+
+  @if (userLoading()) {
+    <div class="flex items-center justify-center py-12">
+      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-red-600"></div>
+    </div>
+  } @else if (userError()) {
+    <div class="bg-red-900/30 border border-red-600 rounded-lg p-4 text-red-400">
+      {{ userError() }}
+    </div>
+  } @else if (user()) {
+    <!-- User Info Card -->
+    <div class="bg-gray-900/50 rounded-lg p-6 mb-6">
+      <div class="flex items-center gap-6">
+        <!-- Avatar -->
+        <div class="w-20 h-20 rounded-full bg-gray-700 flex items-center justify-center text-3xl font-bold text-gray-300">
+          {{ user()?.name?.charAt(0)?.toUpperCase() || '?' }}
+        </div>
+        
+        <!-- Info -->
+        <div class="flex-1">
+          <h2 class="text-2xl font-bold text-white">{{ user()?.name }}</h2>
+          <p class="text-gray-400">{{ user()?.email }}</p>
+          <span class="inline-block mt-2 px-3 py-1 bg-gray-700 text-gray-300 text-sm rounded-full">
+            {{ user()?.role }}
+          </span>
+        </div>
+        
+        <!-- Edit Button -->
+        <a 
+          routerLink="/profile/settings"
+          class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors"
+        >
+          Settings
+        </a>
+      </div>
+    </div>
+
+    <!-- Subscription Card -->
+    <div class="bg-gray-900/50 rounded-lg p-6 mb-6">
+      <h3 class="text-xl font-semibold text-white mb-4">Subscription</h3>
+      
+      @if (subLoading()) {
+        <div class="flex items-center justify-center py-6">
+          <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-red-600"></div>
+        </div>
+      } @else if (subscription()) {
+        <div class="grid gap-4">
+          <div class="flex items-center justify-between">
+            <span class="text-gray-400">Status</span>
+            @if (subscription()?.active) {
+              <span class="text-green-400 font-medium">Active</span>
+            } @else {
+              <span class="text-red-400 font-medium">Inactive</span>
+            }
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-gray-400">Plan</span>
+            <span class="text-white font-medium">{{ subscription()?.plan }}</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-gray-400">Started</span>
+            <span class="text-white">{{ formatDate(subscription()?.startedAt || '') }}</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-gray-400">Expires</span>
+            <span class="text-white">{{ formatDate(subscription()?.expiresAt || '') }}</span>
+          </div>
+        </div>
+      } @else {
+        <div class="text-center py-4">
+          <p class="text-gray-400 mb-4">No active subscription</p>
+          <a 
+            routerLink="/profile/settings"
+            class="inline-block px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md font-medium"
+          >
+            Subscribe Now
+          </a>
+        </div>
+      }
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <div class="bg-gray-900/50 rounded-lg p-4 text-center">
+        <div class="text-2xl font-bold text-white">
+          @if (unreadCount() > 0) {
+            <span class="text-red-500">{{ unreadCount() }}</span>
+          } @else {
+            0
+          }
+        </div>
+        <div class="text-gray-400 text-sm">Notifications</div>
+      </div>
+      <div class="bg-gray-900/50 rounded-lg p-4 text-center">
+        <div class="text-2xl font-bold text-white">{{ user()?.role }}</div>
+        <div class="text-gray-400 text-sm">Account Type</div>
+      </div>
+      <div class="bg-gray-900/50 rounded-lg p-4 text-center">
+        <div class="text-2xl font-bold text-white">{{ formatDate(user()?.createdAt || '') }}</div>
+        <div class="text-gray-400 text-sm">Member Since</div>
+      </div>
+    </div>
+  }
+</div>

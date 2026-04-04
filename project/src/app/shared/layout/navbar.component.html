@@ -14,11 +14,111 @@
       
       <div class="flex items-center space-x-4">
         @if (isAuthenticated()) {
+          <!-- Notifications Dropdown -->
+          <div class="relative">
+            <button 
+              (click)="toggleNotifications()"
+              class="relative text-sv-muted hover:text-sv-text p-2 rounded-md transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+              @if (hasUnread()) {
+                <span class="absolute -top-1 -right-1 bg-sv-red text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {{ unreadCount() > 9 ? '9+' : unreadCount() }}
+                </span>
+              }
+            </button>
+
+            <!-- Dropdown Panel -->
+            @if (showNotifications()) {
+              <div 
+                class="absolute right-0 mt-2 w-80 bg-sv-dark border border-sv-border rounded-lg shadow-xl z-50 overflow-hidden"
+                (click)="$event.stopPropagation()"
+              >
+                <!-- Header -->
+                <div class="flex items-center justify-between px-4 py-3 border-b border-sv-border">
+                  <span class="text-white font-semibold">Notifications</span>
+                  @if (hasUnread()) {
+                    <button 
+                      (click)="markAllAsRead($event)"
+                      class="text-sv-muted hover:text-sv-text text-xs"
+                    >
+                      Mark all read
+                    </button>
+                  }
+                </div>
+
+                <!-- Notification List -->
+                <div class="max-h-80 overflow-y-auto">
+                  @if (notifications().length > 0) {
+                    @for (notif of notifications(); track notif.id) {
+                      <div 
+                        class="px-4 py-3 hover:bg-sv-card transition-colors border-b border-sv-border/50 cursor-pointer"
+                        [class.opacity-50]="notif.isRead"
+                      >
+                        <div class="flex items-start gap-3">
+                          <span 
+                            class="text-lg flex-shrink-0"
+                            [class.text-green-400]="notif.type === 'success'"
+                            [class.text-yellow-400]="notif.type === 'warning'"
+                            [class.text-red-400]="notif.type === 'error'"
+                            [class.text-blue-400]="notif.type === 'info'"
+                          >
+                            {{ getNotifIcon(notif.type) }}
+                          </span>
+                          <div class="flex-1 min-w-0">
+                            <p class="text-white text-sm font-medium truncate">{{ notif.title }}</p>
+                            <p class="text-sv-muted text-xs truncate">{{ notif.message }}</p>
+                            <p class="text-sv-muted text-xs mt-1">{{ formatDate(notif.createdAt) }}</p>
+                          </div>
+                          @if (!notif.isRead) {
+                            <button 
+                              (click)="markAsRead(notif.id, $event)"
+                              class="text-sv-muted hover:text-white text-xs flex-shrink-0"
+                            >
+                              ✓
+                            </button>
+                          }
+                        </div>
+                      </div>
+                    }
+                  } @else {
+                    <div class="px-4 py-8 text-center text-sv-muted">
+                      No notifications
+                    </div>
+                  }
+                </div>
+
+                <!-- Expand/Collapse Button -->
+                @if (totalCount() > 3) {
+                  <div class="px-4 py-2 border-t border-sv-border bg-sv-card/50">
+                    @if (expanded()) {
+                      <button 
+                        (click)="collapseNotifications()"
+                        class="w-full text-center text-sv-muted hover:text-sv-text text-sm"
+                      >
+                        Show less
+                      </button>
+                    } @else {
+                      <button 
+                        (click)="expandNotifications()"
+                        class="w-full text-center text-sv-muted hover:text-sv-text text-sm"
+                      >
+                        Show more ({{ totalCount() }})
+                      </button>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </div>
+
           @if (isAdmin()) {
             <a routerLink="/admin" class="text-sv-muted hover:text-sv-text text-sm">Admin</a>
           }
           <a routerLink="/profile" class="text-sv-muted hover:text-sv-text text-sm">
-            {{ currentUser()?.username }}
+            {{ currentUser()?.name }}
           </a>
           <button (click)="logout()" class="text-sv-muted hover:text-sv-text text-sm">Cerrar Sesión</button>
         } @else {
@@ -28,3 +128,11 @@
     </div>
   </div>
 </nav>
+
+<!-- Click outside to close -->
+@if (showNotifications()) {
+  <div 
+    class="fixed inset-0 z-40" 
+    (click)="showNotifications.set(false)"
+  ></div>
+}
