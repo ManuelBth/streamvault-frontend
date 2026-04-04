@@ -1,4 +1,10 @@
 .player-container {
+  &.pseudo-fullscreen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+  }
+  
   &:fullscreen {
     background-color: #000;
   }

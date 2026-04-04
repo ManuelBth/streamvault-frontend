@@ -13,19 +13,7 @@ const COLOR_MAP: Record<string, string> = {
   selector: 'app-genre-badge',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <span
-      class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full
-             bg-sv-dark border border-sv-border text-xs text-sv-muted
-             transition-colors duration-200 hover:border-sv-text hover:text-sv-text"
-    >
-      <span
-        class="w-2 h-2 rounded-full"
-        [style.background-color]="dotColor()"
-      ></span>
-      {{ genre() }}
-    </span>
-  `
+  templateUrl: './genre-badge.component.html'
 })
 export class GenreBadgeComponent {
   genre = input.required<string>();

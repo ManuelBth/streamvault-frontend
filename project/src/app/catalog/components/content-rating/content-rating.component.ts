@@ -21,14 +21,7 @@ const SIZE_CONFIG: Record<string, string> = {
   selector: 'app-content-rating',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <span
-      class="inline-flex items-center font-semibold rounded border"
-      [ngClass]="[sizeClasses(), colorClasses()]"
-    >
-      {{ rating() }}
-    </span>
-  `
+  templateUrl: './content-rating.component.html'
 })
 export class ContentRatingComponent {
   rating = input.required<string>();

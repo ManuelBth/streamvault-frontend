@@ -1,0 +1,78 @@
+<div class="min-h-screen bg-sv-black">
+  <!-- Loading state -->
+  @if (loading()) {
+    <div class="flex items-center justify-center h-screen">
+      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-sv-red"></div>
+    </div>
+  }
+
+  <!-- Error state -->
+  @if (error()) {
+    <div class="flex flex-col items-center justify-center h-screen text-center px-4">
+      <h2 class="text-sv-text text-2xl font-bold mb-2">Error al cargar el catálogo</h2>
+      <p class="text-sv-muted mb-4">{{ error() }}</p>
+      <button 
+        (click)="loadCatalog()"
+        class="bg-sv-red hover:bg-sv-red-hover text-white px-4 py-2 rounded"
+      >
+        Reintentar
+      </button>
+    </div>
+  }
+
+  <!-- Contenido principal -->
+  @if (!loading() && !error()) {
+    <!-- Hero con contenido destacado -->
+    @if (featuredContent(); as featured) {
+      <app-hero
+        [content]="featured"
+        (onPlay)="navigateToPlayer($event)"
+        (onSelect)="navigateToDetail($event)"
+      />
+    }
+
+    <!-- Búsqueda (si hay query params) -->
+    @if (searchQuery()) {
+      <div class="px-4 md:px-8 py-6">
+        <h2 class="text-sv-text text-xl font-semibold mb-4">
+          Resultados para "{{ searchQuery() }}"
+        </h2>
+        @if (searchResults().length > 0) {
+          <app-content-grid
+            [contents]="searchResults()"
+            (onSelect)="navigateToDetail($event)"
+            (onPlay)="navigateToPlayer($event)"
+          />
+        } @else {
+          <p class="text-sv-muted">No se encontraron resultados.</p>
+        }
+      </div>
+    }
+
+    <!-- Carruseles por género -->
+    @if (!searchQuery()) {
+      <div class="space-y-8 pb-8">
+        @for (group of catalogGroups(); track group.genre) {
+          <app-carousel
+            [title]="group.genre"
+            [items]="group.contents"
+            (onSelect)="navigateToDetail($event)"
+            (onPlay)="navigateToPlayer($event)"
+          />
+        }
+
+        <!-- Si no hay grupos, mostrar todo en grid -->
+        @if (catalogGroups().length === 0 && allContents().length > 0) {
+          <div class="px-4 md:px-8">
+            <h2 class="text-sv-text text-xl font-semibold mb-4">Todo el catálogo</h2>
+            <app-content-grid
+              [contents]="allContents()"
+              (onSelect)="navigateToDetail($event)"
+              (onPlay)="navigateToPlayer($event)"
+            />
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

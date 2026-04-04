@@ -1,16 +1,16 @@
-import { Component, OnInit, OnDestroy, inject, signal, computed, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import Hls from 'hls.js';
 
 import { StreamService } from '../../services/stream.service';
-
-export type PlayerState = 'idle' | 'loading' | 'playing' | 'paused' | 'error';
+import { PlayerControlsService } from '../../services/player-controls.service';
+import { PlayerOverlayComponent } from '../../components/player-overlay/player-overlay.component';
 
 @Component({
   selector: 'app-player',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, PlayerOverlayComponent],
   templateUrl: './player.component.html',
   styleUrl: './player.component.scss'
 })
@@ -20,40 +20,12 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private streamService = inject(StreamService);
+  controls = inject(PlayerControlsService);
 
   private hls: Hls | null = null;
-  private hideControlsTimeout: any;
 
   contentId = signal<string>('');
   episodeId = signal<string>('');
-
-  playerState = signal<PlayerState>('idle');
-  currentTime = signal<number>(0);
-  duration = signal<number>(0);
-  buffered = signal<number>(0);
-  volume = signal<number>(1);
-  muted = signal<boolean>(false);
-  isFullscreen = signal<boolean>(false);
-  showControls = signal<boolean>(true);
-  errorMessage = signal<string>('');
-
-  readonly isPlaying = computed(() => this.playerState() === 'playing');
-  readonly isPaused = computed(() => this.playerState() === 'paused');
-  readonly isLoading = computed(() => this.playerState() === 'loading');
-  readonly hasError = computed(() => this.playerState() === 'error');
-
-  readonly progressPercent = computed(() => {
-    const dur = this.duration();
-    return dur > 0 ? (this.currentTime() / dur) * 100 : 0;
-  });
-
-  readonly bufferedPercent = computed(() => {
-    const dur = this.duration();
-    return dur > 0 ? (this.buffered() / dur) * 100 : 0;
-  });
-
-  readonly formattedCurrentTime = computed(() => this.formatTime(this.currentTime()));
-  readonly formattedDuration = computed(() => this.formatTime(this.duration()));
 
   ngOnInit(): void {
     console.log('[Player] ngOnInit called');
@@ -72,21 +44,19 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       } else {
         console.warn('[Player] No contentId found in route params');
-        this.playerState.set('error');
-        this.errorMessage.set('No se encontró el ID del contenido');
+        this.controls.setError('No se encontró el ID del contenido');
       }
     });
   }
 
   ngAfterViewInit(): void {
     this.initVideoEvents();
+    document.addEventListener('keydown', (e) => this.controls.handleKeydown(e));
   }
 
   ngOnDestroy(): void {
     this.destroyHls();
-    if (this.hideControlsTimeout) {
-      clearTimeout(this.hideControlsTimeout);
-    }
+    this.controls.clearHideControlsTimer();
   }
 
   private initVideoEvents(): void {
@@ -98,15 +68,15 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     video.addEventListener('progress', () => this.onProgress());
     video.addEventListener('play', () => this.onPlay());
     video.addEventListener('pause', () => this.onPause());
-    video.addEventListener('waiting', () => this.playerState.set('loading'));
-    video.addEventListener('playing', () => this.playerState.set('playing'));
+    video.addEventListener('waiting', () => this.controls.setLoading());
+    video.addEventListener('playing', () => this.controls.setPlaying());
     video.addEventListener('error', () => this.onError());
     video.addEventListener('volumechange', () => this.onVolumeChange());
   }
 
   private loadStream(contentId: string): void {
     console.log('[Player] loadStream called with contentId:', contentId);
-    this.playerState.set('loading');
+    this.controls.setLoading();
     this.streamService.loadStreamUrl(contentId);
     
     const checkInterval = setInterval(() => {
@@ -119,14 +89,13 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
       } else if (state.state === 'error') {
         clearInterval(checkInterval);
         console.error('[Player] Stream error:', state.error);
-        this.playerState.set('error');
-        this.errorMessage.set(state.error || 'Failed to load stream');
+        this.controls.setError(state.error || 'Failed to load stream');
       }
     }, 100);
   }
 
   private loadEpisodeStream(contentId: string, episodeId: string): void {
-    this.playerState.set('loading');
+    this.controls.setLoading();
     this.streamService.loadEpisodeStreamUrl(contentId, episodeId);
 
     const checkInterval = setInterval(() => {
@@ -136,8 +105,7 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
         this.initializeHls(state.data.url);
       } else if (state.state === 'error') {
         clearInterval(checkInterval);
-        this.playerState.set('error');
-        this.errorMessage.set(state.error || 'Failed to load episode stream');
+        this.controls.setError(state.error || 'Failed to load episode stream');
       }
     }, 100);
   }
@@ -145,9 +113,6 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   private initializeHls(streamUrl: string): void {
     console.log('[Player] initializeHls called with URL:', streamUrl);
     
-    // Workaround: fix duplicated bucket name in URL (backend bug)
-    // URL like: http://localhost:9000/streamvault-videos/streamvault-videos/...
-    // Should be: http://localhost:9000/streamvault-videos/...
     let fixedUrl = streamUrl;
     const bucketName = 'streamvault-videos';
     const doubleBucket = `${bucketName}/${bucketName}/`;
@@ -170,25 +135,23 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
       this.hls.attachMedia(video);
       this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
         console.log('[Player] HLS manifest parsed, starting playback');
-        this.playerState.set('paused');
-        video.play().catch(() => this.playerState.set('paused'));
+        this.controls.setPaused();
+        video.play().catch(() => this.controls.setPaused());
       });
       this.hls.on(Hls.Events.ERROR, (event, data) => {
         console.error('[Player] HLS error:', data);
         if (data.fatal) {
-          this.playerState.set('error');
-          this.errorMessage.set('Failed to load video stream');
+          this.controls.setError('Failed to load video stream');
         }
       });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
       video.src = fixedUrl;
       video.addEventListener('loadedmetadata', () => {
-        this.playerState.set('paused');
-        video.play().catch(() => this.playerState.set('paused'));
+        this.controls.setPaused();
+        video.play().catch(() => this.controls.setPaused());
       });
     } else {
-      this.playerState.set('error');
-      this.errorMessage.set('HLS is not supported in this browser');
+      this.controls.setError('HLS is not supported in this browser');
     }
   }
 
@@ -202,59 +165,42 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   private onTimeUpdate(): void {
     const video = this.videoElementRef?.nativeElement;
     if (video) {
-      this.currentTime.set(video.currentTime);
+      this.controls.updateCurrentTime(video.currentTime);
     }
   }
 
   private onLoadedMetadata(): void {
     const video = this.videoElementRef?.nativeElement;
     if (video) {
-      this.duration.set(video.duration);
+      this.controls.updateDuration(video.duration);
     }
   }
 
   private onProgress(): void {
     const video = this.videoElementRef?.nativeElement;
     if (video && video.buffered.length > 0) {
-      this.buffered.set(video.buffered.end(video.buffered.length - 1));
+      this.controls.updateBuffered(video.buffered.end(video.buffered.length - 1));
     }
   }
 
   private onPlay(): void {
-    this.playerState.set('playing');
-    this.startHideControlsTimer();
+    this.controls.setPlaying();
   }
 
   private onPause(): void {
-    this.playerState.set('paused');
-    this.showControls.set(true);
-    if (this.hideControlsTimeout) {
-      clearTimeout(this.hideControlsTimeout);
-    }
+    this.controls.setPaused();
   }
 
   private onError(): void {
-    this.playerState.set('error');
-    this.errorMessage.set('Video playback error');
+    this.controls.setError('Video playback error');
   }
 
   private onVolumeChange(): void {
     const video = this.videoElementRef?.nativeElement;
     if (video) {
-      this.volume.set(video.volume);
-      this.muted.set(video.muted);
+      this.controls.updateVolume(video.volume);
+      this.controls.updateMuted(video.muted);
     }
-  }
-
-  private startHideControlsTimer(): void {
-    if (this.hideControlsTimeout) {
-      clearTimeout(this.hideControlsTimeout);
-    }
-    this.hideControlsTimeout = setTimeout(() => {
-      if (this.isPlaying()) {
-        this.showControls.set(false);
-      }
-    }, 3000);
   }
 
   onVideoClick(): void {
@@ -269,10 +215,7 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onVideoMouseMove(): void {
-    this.showControls.set(true);
-    if (this.isPlaying()) {
-      this.startHideControlsTimer();
-    }
+    this.controls.showControlsTemporarily();
   }
 
   togglePlay(): void {
@@ -286,13 +229,9 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  seek(event: MouseEvent): void {
+  seek(percent: number): void {
     const video = this.videoElementRef?.nativeElement;
-    const progressBar = event.currentTarget as HTMLElement;
-    if (!video || !progressBar) return;
-
-    const rect = progressBar.getBoundingClientRect();
-    const percent = (event.clientX - rect.left) / rect.width;
+    if (!video) return;
     const time = percent * video.duration;
     video.currentTime = Math.max(0, Math.min(time, video.duration));
   }
@@ -309,11 +248,10 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     video.muted = !video.muted;
   }
 
-  setVolume(event: Event): void {
+  setVolume(volume: number): void {
     const video = this.videoElementRef?.nativeElement;
-    const input = event.target as HTMLInputElement;
     if (!video) return;
-    video.volume = parseFloat(input.value);
+    video.volume = volume;
     if (video.muted && video.volume > 0) {
       video.muted = false;
     }
@@ -325,11 +263,11 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (!document.fullscreenElement) {
       container.requestFullscreen().then(() => {
-        this.isFullscreen.set(true);
+        this.controls.setFullscreen(true);
       });
     } else {
       document.exitFullscreen().then(() => {
-        this.isFullscreen.set(false);
+        this.controls.setFullscreen(false);
       });
     }
   }
@@ -341,8 +279,7 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   retry(): void {
     const id = this.contentId();
     if (id) {
-      this.playerState.set('loading');
-      this.errorMessage.set('');
+      this.controls.setLoading();
       const epId = this.episodeId();
       if (epId) {
         this.loadEpisodeStream(id, epId);
@@ -352,10 +289,26 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  private formatTime(seconds: number): string {
-    if (isNaN(seconds) || seconds < 0) return '0:00';
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  setSpeed(speed: number): void {
+    const video = this.videoElementRef?.nativeElement;
+    if (video) {
+      video.playbackRate = speed;
+      this.controls.setSpeed(speed);
+    }
+  }
+
+  setQuality(quality: string): void {
+    if (!this.hls) return;
+    
+    if (quality === 'Auto') {
+      this.hls.currentLevel = -1;
+    } else {
+      const qualityMap: Record<string, number> = { '1080p': 0, '720p': 1, '480p': 2, '360p': 3 };
+      const levelIndex = qualityMap[quality];
+      if (levelIndex !== undefined && levelIndex < this.hls.levels.length) {
+        this.hls.currentLevel = levelIndex;
+      }
+    }
+    this.controls.setQuality(quality);
   }
 }

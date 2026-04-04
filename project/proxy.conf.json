@@ -1,0 +1,17 @@
+{
+  "/api": {
+    "target": "http://192.168.100.13:8080",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/ws": {
+    "target": "ws://192.168.100.13:8080",
+    "ws": true
+  },
+  "/stream": {
+    "target": "http://192.168.100.13:9000",
+    "secure": false,
+    "changeOrigin": true
+  }
+}
