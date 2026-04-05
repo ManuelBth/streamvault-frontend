@@ -1,22 +1,25 @@
-import { Component, inject, signal, computed, OnDestroy } from '@angular/core';
+import { Component, inject, signal, computed, OnDestroy, ViewChild } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../auth/services/auth.service';
 import { NotificationService } from '../services/notification.service';
 import { WebSocketService } from '../services/websocket.service';
+import { SendMessageModalComponent } from '../../mail/components/send-message-modal/send-message-modal.component';
 import { currentUser, isAuthenticated, isAdmin } from '../store/app.store';
 import { Notification } from '../models';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, CommonModule],
+  imports: [RouterLink, RouterLinkActive, CommonModule, SendMessageModalComponent],
   templateUrl: './navbar.component.html'
 })
 export class NavbarComponent implements OnDestroy {
   private authService = inject(AuthService);
   private notificationService = inject(NotificationService);
   private webSocketService = inject(WebSocketService);
+  
+  @ViewChild(SendMessageModalComponent) sendMessageModal!: SendMessageModalComponent;
 
   currentUser = currentUser;
   isAuthenticated = isAuthenticated;
@@ -110,5 +113,9 @@ export class NavbarComponent implements OnDestroy {
 
   logout(): void {
     this.authService.logout();
+  }
+
+  openSendMessageModal(): void {
+    this.sendMessageModal.open();
   }
 }

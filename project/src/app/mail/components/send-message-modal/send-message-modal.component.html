@@ -1,0 +1,134 @@
+<!-- Modal Backdrop -->
+@if (isOpen()) {
+  <div 
+    class="modal-backdrop fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4"
+    (click)="onBackdropClick($event)"
+  >
+    <!-- Modal Container -->
+    <div 
+      class="bg-sv-dark border border-sv-border rounded-lg shadow-xl w-full max-w-lg p-6"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+    >
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between mb-6">
+        <h2 id="modal-title" class="text-white font-semibold text-lg">Send Message</h2>
+        <button 
+          (click)="close()"
+          class="text-sv-muted hover:text-white transition-colors p-1"
+          aria-label="Close modal"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Form -->
+      <form (ngSubmit)="send()" class="space-y-4">
+        <!-- To Field -->
+        <div>
+          <label for="to" class="block text-sv-muted text-sm mb-1">
+            To <span class="text-red-500">*</span>
+          </label>
+          <input 
+            type="email" 
+            id="to"
+            [ngModel]="to()" 
+            (ngModelChange)="to.set($event)"
+            (blur)="onToBlur()"
+            name="to"
+            placeholder="recipient@example.com"
+            class="w-full px-3 py-2 bg-sv-card border border-sv-border rounded-md text-white placeholder-sv-muted/50 focus:outline-none focus:border-sv-red"
+            [class.border-red-500]="showToError()"
+            [disabled]="isLoading()"
+          />
+          @if (showToError()) {
+            <p class="text-red-500 text-xs mt-1">Please enter a valid email address</p>
+          }
+        </div>
+
+        <!-- Subject Field -->
+        <div>
+          <label for="subject" class="block text-sv-muted text-sm mb-1">
+            Subject <span class="text-red-500">*</span>
+          </label>
+          <input 
+            type="text" 
+            id="subject"
+            [ngModel]="subject()" 
+            (ngModelChange)="subject.set($event)"
+            (blur)="onSubjectBlur()"
+            name="subject"
+            placeholder="Enter subject"
+            class="w-full px-3 py-2 bg-sv-card border border-sv-border rounded-md text-white placeholder-sv-muted/50 focus:outline-none focus:border-sv-red"
+            [class.border-red-500]="showSubjectError()"
+            [disabled]="isLoading()"
+          />
+          @if (showSubjectError()) {
+            <p class="text-red-500 text-xs mt-1">Subject is required</p>
+          }
+        </div>
+
+        <!-- Body Field -->
+        <div>
+          <label for="body" class="block text-sv-muted text-sm mb-1">
+            Message <span class="text-red-500">*</span>
+          </label>
+          <textarea 
+            id="body"
+            [ngModel]="body()" 
+            (ngModelChange)="body.set($event)"
+            (blur)="onBodyBlur()"
+            name="body"
+            rows="5"
+            placeholder="Write your message..."
+            class="w-full px-3 py-2 bg-sv-card border border-sv-border rounded-md text-white placeholder-sv-muted/50 focus:outline-none focus:border-sv-red resize-none"
+            [class.border-red-500]="showBodyError()"
+            [disabled]="isLoading()"
+          ></textarea>
+          @if (showBodyError()) {
+            <p class="text-red-500 text-xs mt-1">Message is required</p>
+          }
+        </div>
+
+        <!-- Error Message -->
+        @if (errorMessage()) {
+          <div class="bg-red-500/10 border border-red-500/50 rounded-md p-3">
+            <p class="text-red-500 text-sm">{{ errorMessage() }}</p>
+          </div>
+        }
+
+        <!-- Action Buttons -->
+        <div class="flex justify-end pt-2">
+          <button 
+            type="button"
+            (click)="close()"
+            class="bg-sv-card hover:bg-sv-border text-sv-muted px-4 py-2 rounded-md mr-3 transition-colors"
+            [disabled]="isLoading()"
+          >
+            Cancel
+          </button>
+          <button 
+            type="submit"
+            class="bg-sv-red hover:bg-red-700 text-white font-medium px-6 py-2 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            [disabled]="isLoading()"
+          >
+            @if (isLoading()) {
+              <span class="flex items-center gap-2">
+                <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Sending...
+              </span>
+            } @else {
+              Send
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

@@ -110,4 +110,18 @@ export class NotificationService {
       this._unreadCount.update(count => count + 1);
     }
   }
+
+  // Show a toast notification (client-side only)
+  show(message: string, type: 'success' | 'error' | 'info' | 'warning' = 'info'): void {
+    const notification: Notification = {
+      id: `toast-${Date.now()}`,
+      type,
+      title: type.charAt(0).toUpperCase() + type.slice(1),
+      message,
+      isRead: false,
+      createdAt: new Date().toISOString()
+    };
+    
+    this.addNotificationFromWebSocket(notification);
+  }
 }
