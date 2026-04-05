@@ -58,6 +58,10 @@ export const routes: Routes = [
       {
         path: 'contact',
         loadChildren: () => import('./contact/contact.routes').then(m => m.CONTACT_ROUTES)
+      },
+      {
+        path: 'notifications',
+        loadChildren: () => import('./notifications/notifications.routes').then(m => m.NOTIFICATION_ROUTES)
       }
     ]
   },

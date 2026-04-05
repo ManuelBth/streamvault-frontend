@@ -18,7 +18,7 @@
           <button 
             (click)="openSendMessageModal()"
             class="text-sv-muted hover:text-sv-text p-2 rounded-md transition-colors"
-            title="Send Message"
+            title="Enviar mensaje"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -49,13 +49,13 @@
               >
                 <!-- Header -->
                 <div class="flex items-center justify-between px-4 py-3 border-b border-sv-border">
-                  <span class="text-white font-semibold">Notifications</span>
+                  <span class="text-white font-semibold">Notificaciones</span>
                   @if (hasUnread()) {
                     <button 
                       (click)="markAllAsRead($event)"
                       class="text-sv-muted hover:text-sv-text text-xs"
                     >
-                      Mark all read
+                      Marcar todo como leído
                     </button>
                   }
                 </div>
@@ -63,7 +63,7 @@
                 <!-- Notification List -->
                 <div class="max-h-80 overflow-y-auto">
                   @if (notifications().length > 0) {
-                    @for (notif of notifications(); track notif.id) {
+                    @for (notif of notifications().slice(0, 5); track notif.id) {
                       <div 
                         class="px-4 py-3 hover:bg-sv-card transition-colors border-b border-sv-border/50 cursor-pointer"
                         [class.opacity-50]="notif.isRead"
@@ -76,7 +76,12 @@
                             [class.text-red-400]="notif.type === 'error'"
                             [class.text-blue-400]="notif.type === 'info'"
                           >
-                            {{ getNotifIcon(notif.type) }}
+                            @switch (notif.type) {
+                              @case ('success') { ✓ }
+                              @case ('warning') { ⚠ }
+                              @case ('error') { ✕ }
+                              @default { ℹ }
+                            }
                           </span>
                           <div class="flex-1 min-w-0">
                             <p class="text-white text-sm font-medium truncate">{{ notif.title }}</p>
@@ -96,29 +101,20 @@
                     }
                   } @else {
                     <div class="px-4 py-8 text-center text-sv-muted">
-                      No notifications
+                      No hay notificaciones
                     </div>
                   }
                 </div>
 
-                <!-- Expand/Collapse Button -->
-                @if (totalCount() > 3) {
+                <!-- View All Button -->
+                @if (notifications().length > 0) {
                   <div class="px-4 py-2 border-t border-sv-border bg-sv-card/50">
-                    @if (expanded()) {
-                      <button 
-                        (click)="collapseNotifications()"
-                        class="w-full text-center text-sv-muted hover:text-sv-text text-sm"
-                      >
-                        Show less
-                      </button>
-                    } @else {
-                      <button 
-                        (click)="expandNotifications()"
-                        class="w-full text-center text-sv-muted hover:text-sv-text text-sm"
-                      >
-                        Show more ({{ totalCount() }})
-                      </button>
-                    }
+                    <button 
+                      (click)="goToNotifications()"
+                      class="w-full text-center text-sv-muted hover:text-sv-text text-sm"
+                    >
+                      Ver todas las notificaciones
+                    </button>
                   </div>
                 }
               </div>
@@ -144,8 +140,14 @@
 @if (showNotifications()) {
   <div 
     class="fixed inset-0 z-40" 
-    (click)="showNotifications.set(false)"
+    (click)="closeNotifications()"
   ></div>
 }
 
 <app-send-message-modal />
+
+@if (showNotifications()) {
+  <ng-container>
+    <!-- Helper method available in the component -->
+  </ng-container>
+}

@@ -4,21 +4,19 @@ import { FormsModule } from '@angular/forms';
 
 import { UserService } from '../../services/user.service';
 import { SubscriptionService } from '../../services/subscription.service';
-import { NotificationService } from '../../../shared/services/notification.service';
-import { User } from '../../../shared/models';
-import { Subscription } from '../../models/subscription.model';
-import { Notification } from '../../../shared/models';
+import { PlanSelectorComponent } from '../../components/plan-selector/plan-selector.component';
+import { PaymentModalComponent } from '../../components/payment-modal/payment-modal.component';
+import { Plan, Subscription } from '../../models/subscription.model';
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, PlanSelectorComponent, PaymentModalComponent],
   templateUrl: './settings.component.html'
 })
 export class SettingsComponent implements OnInit {
   private userService = inject(UserService);
   private subscriptionService = inject(SubscriptionService);
-  private notificationService = inject(NotificationService);
 
   readonly userState = this.userService.currentUser;
   readonly userLoading = this.userService.isLoading;
@@ -28,27 +26,57 @@ export class SettingsComponent implements OnInit {
   readonly subLoading = this.subscriptionService.isLoading;
   readonly subError = this.subscriptionService.errorMessage;
 
-  readonly notifState = this.notificationService.notifications;
-  readonly notifLoading = this.notificationService.isLoading;
-  readonly notifError = this.notificationService.errorMessage;
-  readonly unreadCount = this.notificationService.unreadCount;
+  // Plans available
+  readonly plans = this.subscriptionService.getPlans();
+
+  // Modal state
+  showPaymentModal = signal(false);
+  selectedPlan = signal<Plan | null>(null);
 
   editName = signal('');
   editEmail = signal('');
   updating = signal(false);
   purchaseLoading = signal(false);
-  markReadLoading = signal<string | null>(null);
 
   ngOnInit(): void {
     this.userService.loadMe();
     this.subscriptionService.loadMySubscription();
-    this.notificationService.loadAll();
-    this.notificationService.loadUnreadCount();
   }
 
   readonly user = computed(() => this.userState().data);
   readonly subscription = computed(() => this.subState().data);
-  readonly notifications = computed(() => this.notifState().data ?? []);
+
+  // Handle plan selection
+  onSelectPlan(plan: Plan): void {
+    if (plan.id === 'FREE') {
+      this.purchaseFreePlan();
+    } else {
+      this.selectedPlan.set(plan);
+      this.showPaymentModal.set(true);
+    }
+  }
+
+  purchaseFreePlan(): void {
+    this.purchaseLoading.set(true);
+    this.subscriptionService.purchase('FREE').subscribe({
+      next: () => {
+        this.purchaseLoading.set(false);
+        this.subscriptionService.loadMySubscription();
+      },
+      error: () => this.purchaseLoading.set(false)
+    });
+  }
+
+  onPaymentSuccess(subscription: Subscription): void {
+    this.showPaymentModal.set(false);
+    this.selectedPlan.set(null);
+    this.subscriptionService.loadMySubscription();
+  }
+
+  closePaymentModal(): void {
+    this.showPaymentModal.set(false);
+    this.selectedPlan.set(null);
+  }
 
   startEdit(): void {
     const u = this.user();
@@ -81,39 +109,12 @@ export class SettingsComponent implements OnInit {
   }
 
   purchaseSubscription(): void {
-    this.purchaseLoading.set(true);
-    this.subscriptionService.purchase().subscribe({
-      next: () => {
-        this.purchaseLoading.set(false);
-        this.subscriptionService.loadMySubscription();
-      },
-      error: () => this.purchaseLoading.set(false)
-    });
-  }
-
-  markAsRead(id: string): void {
-    this.markReadLoading.set(id);
-    this.notificationService.markAsRead(id).subscribe({
-      next: () => {
-        this.markReadLoading.set(null);
-        this.notificationService.loadAll();
-        this.notificationService.loadUnreadCount();
-      },
-      error: () => this.markReadLoading.set(null)
-    });
-  }
-
-  markAllAsRead(): void {
-    this.notificationService.markAllAsRead().subscribe({
-      next: () => {
-        this.notificationService.loadAll();
-        this.notificationService.loadUnreadCount();
-      }
-    });
+    // Open plan selector - navigate or show inline
+    // For now, just trigger the plan selector flow
   }
 
   formatDate(dateStr: string): string {
-    return new Date(dateStr).toLocaleDateString('en-US', {
+    return new Date(dateStr).toLocaleDateString('es-AR', {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
@@ -128,12 +129,11 @@ export class SettingsComponent implements OnInit {
     }
   }
 
-  getNotifIcon(type: string): string {
-    switch (type) {
-      case 'success': return '✓';
-      case 'warning': return '⚠';
-      case 'error': return '✕';
-      default: return 'ℹ';
+  getPlanName(plan: string): string {
+    switch (plan) {
+      case 'PREMIUM': return 'Premium';
+      case 'BASIC': return 'Básico';
+      default: return 'Gratis';
     }
   }
 }

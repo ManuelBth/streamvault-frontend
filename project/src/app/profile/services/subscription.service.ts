@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal, computed } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of, delay } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { Subscription } from '../models/subscription.model';
+import { Subscription, Plan, PlanType, AVAILABLE_PLANS } from '../models/subscription.model';
 
 export type LoadingState<T> = {
   state: 'idle' | 'loading' | 'success' | 'error';
@@ -30,6 +30,10 @@ export class SubscriptionService {
     this._subscription().state === 'error' ? this._subscription().error ?? null : null
   );
 
+  getPlans(): Plan[] {
+    return AVAILABLE_PLANS;
+  }
+
   getMySubscription(): Observable<Subscription | null> {
     return this.http.get<Subscription | null>(`${this.apiUrl}/me`);
   }
@@ -43,7 +47,22 @@ export class SubscriptionService {
     });
   }
 
-  purchase(): Observable<Subscription> {
+  purchase(plan: PlanType): Observable<Subscription> {
+    // Emular pago exitoso con delay de 2 segundos
+    // En producción, esto llamaría al backend
+    const mockSubscription: Subscription = {
+      id: `sub-${Date.now()}`,
+      plan: plan,
+      startedAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      active: true
+    };
+
+    return of(mockSubscription).pipe(delay(2000));
+  }
+
+  // Método real que llama al backend (para uso futuro)
+  purchaseReal(): Observable<Subscription> {
     return this.http.post<Subscription>(`${this.apiUrl}/purchase`, {});
   }
 }

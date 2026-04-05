@@ -1,23 +1,29 @@
 import { Component, inject, signal, computed, OnDestroy, ViewChild } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../auth/services/auth.service';
-import { NotificationService } from '../services/notification.service';
-import { WebSocketService } from '../services/websocket.service';
+import { NotificationService } from '../../notifications/services/notification.service';
+import { WebSocketNotificationService } from '../../notifications/services/websocket-notification.service';
 import { SendMessageModalComponent } from '../../mail/components/send-message-modal/send-message-modal.component';
-import { currentUser, isAuthenticated, isAdmin } from '../store/app.store';
-import { Notification } from '../models';
+import { currentUser, isAuthenticated, isAdmin } from '../../shared/store/app.store';
+import { Notification } from '../../notifications/models/notification.model';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, CommonModule, SendMessageModalComponent],
+  imports: [
+    RouterLink, 
+    RouterLinkActive, 
+    CommonModule, 
+    SendMessageModalComponent
+  ],
   templateUrl: './navbar.component.html'
 })
 export class NavbarComponent implements OnDestroy {
   private authService = inject(AuthService);
   private notificationService = inject(NotificationService);
-  private webSocketService = inject(WebSocketService);
+  private webSocketService = inject(WebSocketNotificationService);
+  private router = inject(Router);
   
   @ViewChild(SendMessageModalComponent) sendMessageModal!: SendMessageModalComponent;
 
@@ -25,30 +31,18 @@ export class NavbarComponent implements OnDestroy {
   isAuthenticated = isAuthenticated;
   isAdmin = isAdmin;
 
-  // Notification dropdown state
   showNotifications = signal(false);
-  expanded = signal(false);
 
-  // Load notifications on init
   constructor() {
     this.notificationService.loadAll();
     this.notificationService.loadUnreadCount();
-    // WebSocket connection is now handled automatically by the service via effect
   }
 
-  ngOnDestroy(): void {
-    // WebSocket will auto-disconnect when user logs out via the effect
-  }
+  ngOnDestroy(): void {}
 
   readonly notifications = computed(() => {
     const all = this.notificationService.notifications();
-    const list = all.data ?? [];
-    return this.expanded() ? list.slice(0, 5) : list.slice(0, 3);
-  });
-
-  readonly totalCount = computed(() => {
-    const all = this.notificationService.notifications();
-    return all.data?.length ?? 0;
+    return all.data ?? [];
   });
 
   readonly unreadCount = this.notificationService.unreadCount;
@@ -58,12 +52,8 @@ export class NavbarComponent implements OnDestroy {
     this.showNotifications.update(v => !v);
   }
 
-  expandNotifications(): void {
-    this.expanded.set(true);
-  }
-
-  collapseNotifications(): void {
-    this.expanded.set(false);
+  closeNotifications(): void {
+    this.showNotifications.set(false);
   }
 
   markAsRead(id: string, event: Event): void {
@@ -86,6 +76,19 @@ export class NavbarComponent implements OnDestroy {
     });
   }
 
+  logout(): void {
+    this.authService.logout();
+  }
+
+  openSendMessageModal(): void {
+    this.sendMessageModal.open();
+  }
+
+  goToNotifications(): void {
+    this.closeNotifications();
+    this.router.navigate(['/notifications']);
+  }
+
   formatDate(dateStr: string): string {
     if (!dateStr) return '';
     const date = new Date(dateStr);
@@ -95,27 +98,10 @@ export class NavbarComponent implements OnDestroy {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays < 7) return `${diffDays}d ago`;
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  }
-
-  getNotifIcon(type: string): string {
-    switch (type) {
-      case 'success': return '✓';
-      case 'warning': return '⚠';
-      case 'error': return '✕';
-      default: return 'ℹ';
-    }
-  }
-
-  logout(): void {
-    this.authService.logout();
-  }
-
-  openSendMessageModal(): void {
-    this.sendMessageModal.open();
+    if (diffMins < 1) return 'Ahora mismo';
+    if (diffMins < 60) return `Hace ${diffMins}m`;
+    if (diffHours < 24) return `Hace ${diffHours}h`;
+    if (diffDays < 7) return `Hace ${diffDays}d`;
+    return date.toLocaleDateString('es-AR', { month: 'short', day: 'numeric' });
   }
 }

@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 
 import { UserService } from '../../services/user.service';
 import { SubscriptionService } from '../../services/subscription.service';
-import { NotificationService } from '../../../shared/services/notification.service';
+import { NotificationService } from '../../../notifications/services/notification.service';
 
 @Component({
   selector: 'app-profile',
@@ -37,7 +37,7 @@ export class ProfileComponent implements OnInit {
 
   formatDate(dateStr: string): string {
     if (!dateStr) return '-';
-    return new Date(dateStr).toLocaleDateString('en-US', {
+    return new Date(dateStr).toLocaleDateString('es-AR', {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
