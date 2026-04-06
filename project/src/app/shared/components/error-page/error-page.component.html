@@ -1,0 +1,17 @@
+<div class="error-page">
+  <div class="error-page__icon">⚠</div>
+  <h1 class="error-page__title">{{ title() }}</h1>
+  <p class="error-page__message">{{ message() }}</p>
+  <div class="error-page__actions">
+    @if (showRetryButton()) {
+      <button class="error-page__button error-page__button--primary" (click)="onRetry.emit()">
+        Reintentar
+      </button>
+    }
+    @if (showHomeButton()) {
+      <button class="error-page__button error-page__button--secondary" (click)="onHome.emit()">
+        Volver al inicio
+      </button>
+    }
+  </div>
+</div>
