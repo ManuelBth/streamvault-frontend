@@ -1,0 +1,34 @@
+<div class="avatar-wrapper">
+  <div class="avatar-container" [class]="size()">
+    @if (avatarUrl()) {
+      <img [src]="avatarUrl()" alt="Avatar" class="avatar-img" />
+    } @else {
+      <div class="avatar-placeholder">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+      </div>
+    }
+  </div>
+
+  @if (isEditing()) {
+    <div class="avatar-edit">
+      <input 
+        type="text" 
+        [(ngModel)]="editingUrl" 
+        placeholder="URL de imagen"
+        class="avatar-input"
+      />
+      <div class="edit-actions">
+        <button (click)="saveEdit()" class="btn-save">Guardar</button>
+        <button (click)="cancelEdit()" class="btn-cancel">Cancelar</button>
+        <button (click)="useDefault()" class="btn-default">Por defecto</button>
+      </div>
+    </div>
+  } @else {
+    <button (click)="startEditing()" class="edit-trigger">
+      Cambiar avatar
+    </button>
+  }
+</div>
