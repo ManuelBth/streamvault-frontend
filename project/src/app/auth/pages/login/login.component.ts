@@ -1,8 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, effect } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { isLoading, setLoading } from '../../../shared/store/app.store';
+import { ProfileService } from '../../../profile/services/profile.service';
 
 @Component({
   selector: 'app-login',
@@ -14,8 +15,11 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private profileService = inject(ProfileService);
 
   errorMessage = signal<string | null>(null);
+  private loginCompleted = signal(false);
+  private navigationHandled = signal(false);
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -23,6 +27,27 @@ export class LoginComponent {
   });
 
   isLoading = isLoading;
+
+  constructor() {
+    effect(() => {
+      if (!this.loginCompleted() || this.navigationHandled()) return;
+      
+      const profilesState = this.profileService.profiles();
+      if (profilesState.state !== 'success' || !profilesState.data) return;
+      
+      const count = profilesState.data.length;
+      this.navigationHandled.set(true);
+      
+      if (count === 0) {
+        this.router.navigate(['/profile/manage']);
+      } else if (count === 1) {
+        this.profileService.selectProfile(profilesState.data[0]);
+        this.router.navigate(['/catalog']);
+      } else {
+        this.router.navigate(['/profile/select']);
+      }
+    });
+  }
 
   onSubmit(): void {
     if (this.loginForm.invalid) return;
@@ -35,7 +60,8 @@ export class LoginComponent {
     this.authService.login(credentials).subscribe({
       next: () => {
         setLoading(false);
-        this.router.navigate(['/catalog']);
+        this.loginCompleted.set(true);
+        this.profileService.loadProfiles();
       },
       error: (err) => {
         setLoading(false);

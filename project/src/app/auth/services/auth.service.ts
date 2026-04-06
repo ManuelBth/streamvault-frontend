@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap, switchMap, of } from 'rxjs';
+import { Router } from '@angular/router';
+import { Observable, tap, switchMap, of, forkJoin } from 'rxjs';
 import { TokenService } from './token.service';
 import { setCurrentUser } from '../../shared/store/app.store';
 import { environment } from '../../../environments/environment';
@@ -8,11 +9,13 @@ import { environment } from '../../../environments/environment';
 // Importar tipos del models folder (auth-specific)
 import type { LoginRequest, RegisterRequest, AuthResponse } from '../models';
 import type { User } from '../../shared/models';
+import type { Profile } from '../../profile/models/profile.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private http = inject(HttpClient);
   private tokenService = inject(TokenService);
+  private router = inject(Router);
   private readonly apiUrl = environment.apiUrl; // Ya incluye /api/v1
 
   initializeAuth(): Observable<User | null> {
@@ -49,6 +52,16 @@ export class AuthService {
     );
   }
 
+  getProfiles(): Observable<Profile[]> {
+    return this.http.get<Profile[]>(`${this.apiUrl}/profiles`);
+  }
+
+  shouldShowProfileSelect(): Observable<boolean> {
+    return this.getProfiles().pipe(
+      switchMap(profiles => of(profiles.length > 1))
+    );
+  }
+
   register(data: RegisterRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/auth/register`, data).pipe(
       tap(response => {
@@ -67,6 +80,7 @@ export class AuthService {
   logout(): void {
     this.tokenService.clearToken();
     setCurrentUser(null);
+    this.router.navigate(['/auth/login']);
   }
 
   isAuthenticated(): boolean {
