@@ -1,0 +1,65 @@
+<div class="min-h-screen bg-sv-dark flex flex-col items-center justify-center p-4">
+  <div class="w-full max-w-2xl">
+    <h1 class="text-3xl font-bold text-white text-center mb-2">¿Quién está viendo ahora?</h1>
+    <p class="text-sv-muted text-center mb-8">Selecciona un perfil para continuar</p>
+
+    @if (profiles().state === 'loading') {
+      <div class="flex justify-center py-12">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-sv-red"></div>
+      </div>
+    } @else if (profiles().state === 'error') {
+      <div class="text-center py-12">
+        <p class="text-red-400">{{ profiles().error || 'Error al cargar perfiles' }}</p>
+        <button 
+          (click)="ngOnInit()"
+          class="mt-4 px-4 py-2 bg-sv-red text-white rounded-md hover:bg-red-600 transition-colors"
+        >
+          Reintentar
+        </button>
+      </div>
+    } @else {
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
+        @for (profile of profiles().data || []; track profile.id) {
+          <button
+            (click)="onSelectProfile(profile)"
+            class="flex flex-col items-center p-4 rounded-lg transition-all"
+            [class.bg-sv-card]="selectedProfile()?.id === profile.id"
+            [class.border-2]="selectedProfile()?.id === profile.id"
+            [class.border-sv-red]="selectedProfile()?.id === profile.id"
+            [class.hover:bg-sv-card]="selectedProfile()?.id !== profile.id"
+          >
+            <div class="w-20 h-20 rounded-full bg-sv-border flex items-center justify-center text-white text-3xl font-bold mb-3 overflow-hidden">
+              @if (profile.avatarUrl) {
+                <img [src]="profile.avatarUrl" [alt]="profile.name" class="w-full h-full object-cover" />
+              } @else {
+                {{ getInitials(profile.name) }}
+              }
+            </div>
+            <span class="text-white font-medium">{{ profile.name }}</span>
+          </button>
+        } @empty {
+          <div class="col-span-full text-center py-8 text-sv-muted">
+            No hay perfiles disponibles
+          </div>
+        }
+      </div>
+
+      @if (selectedProfile()) {
+        <div class="flex justify-center gap-4">
+          <button
+            (click)="onContinue()"
+            class="px-8 py-3 bg-sv-red text-white font-semibold rounded-md hover:bg-red-600 transition-colors"
+          >
+            Continuar
+          </button>
+          <a
+            routerLink="/profile/manage"
+            class="px-8 py-3 border border-sv-border text-white font-semibold rounded-md hover:bg-sv-card transition-colors"
+          >
+            Administrar Perfiles
+          </a>
+        </div>
+      }
+    }
+  </div>
+</div>

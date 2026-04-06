@@ -1,0 +1,309 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1.5rem;
+  
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.profile-card {
+  background: #1F1F1F;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: #444;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  }
+  
+  &.active {
+    border-color: #E50914;
+    box-shadow: 0 0 0 1px #E50914;
+  }
+}
+
+.profile-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #2C2C2C 0%, #1F1F1F 100%);
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .initials {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #757575;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+}
+
+.profile-info {
+  flex: 1;
+  min-width: 0;
+  
+  h3 {
+    color: #FFFFFF;
+    font-weight: 600;
+    font-size: 1.125rem;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .active-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    color: #E50914;
+    margin-top: 0.25rem;
+    
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+  }
+  
+  .created-date {
+    color: #757575;
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+  }
+}
+
+.profile-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  
+  .btn-select {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    background: transparent;
+    border: 1px solid #333;
+    color: #B3B3B3;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: #2C2C2C;
+      border-color: #444;
+      color: #FFFFFF;
+    }
+  }
+  
+  .btn-edit {
+    padding: 0.5rem;
+    background: transparent;
+    border: 1px solid #333;
+    color: #B3B3B3;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: #2C2C2C;
+      border-color: #E50914;
+      color: #E50914;
+    }
+    
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+  
+  .btn-delete {
+    padding: 0.5rem;
+    background: transparent;
+    border: 1px solid #333;
+    color: #B3B3B3;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: #EF4444;
+      color: #EF4444;
+    }
+    
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem;
+  color: #757575;
+}
+
+// Modal styles
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 1rem;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal-content {
+  background: #1F1F1F;
+  border: 1px solid #333;
+  border-radius: 16px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 28rem;
+  animation: slideUp 0.3s ease;
+}
+
+.modal-title {
+  color: #FFFFFF;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 1.5rem;
+}
+
+.delete-modal {
+  max-width: 20rem;
+  
+  .delete-message {
+    color: #B3B3B3;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+  
+  .delete-actions {
+    display: flex;
+    gap: 0.75rem;
+    
+    .btn-cancel {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      background: transparent;
+      border: 1px solid #333;
+      color: #B3B3B3;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: #2C2C2C;
+        border-color: #444;
+      }
+    }
+    
+    .btn-delete {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      background: #DC2626;
+      border: none;
+      color: #FFFFFF;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: #B91C1C;
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Loading state
+.loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 3rem;
+  
+  .spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid #333;
+    border-top-color: #E50914;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// Error state
+.error-container {
+  text-align: center;
+  padding: 3rem;
+  
+  .error-message {
+    color: #EF4444;
+    margin-bottom: 1rem;
+  }
+  
+  .btn-retry {
+    padding: 0.5rem 1rem;
+    background: #E50914;
+    border: none;
+    color: #FFFFFF;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    
+    &:hover {
+      background: #B20710;
+    }
+  }
+}

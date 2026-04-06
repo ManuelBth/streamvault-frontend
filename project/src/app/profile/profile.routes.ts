@@ -6,6 +6,11 @@ export const PROFILE_ROUTES: Routes = [
     loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent)
   },
   {
+    path: 'select',
+    loadComponent: () => import('./pages/profile-select/profile-select.component').then(m => m.ProfileSelectPageComponent),
+    title: 'Seleccionar Perfil | StreamVault'
+  },
+  {
     path: 'edit',
     loadComponent: () => import('./pages/profile-edit/profile-edit.component').then(m => m.ProfileEditComponent)
   },
