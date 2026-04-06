@@ -1,27 +1,27 @@
 <nav class="bg-sv-dark border-b border-sv-border">
   <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-14 sm:h-16">
-      <!-- Column 1: Logo (fixed, doesn't grow) -->
+      <!-- Column 1: Logo -->
       <div class="shrink-0">
-        <a routerLink="/catalog" class="text-lg sm:text-xl font-bold text-sv-red">SV<span class="hidden sm:inline">StreamVault</span></a>
+        <a routerLink="/catalog" class="text-xl font-bold text-sv-red">SV<span class="hidden sm:inline">treamVault</span></a>
       </div>
       
-      <!-- Column 2: Nav links (flexible, with scroll on mobile) -->
+      <!-- Column 2: Nav links (scroll on mobile) -->
       @if (isAuthenticated()) {
-        <div class="flex-1 mx-2 lg:mx-4 overflow-x-auto scrollbar-hide">
-          <div class="flex items-center space-x-1 lg:space-x-4 w-max lg:w-auto">
-            <a routerLink="/catalog" routerLinkActive="text-sv-red" class="text-sv-muted hover:text-sv-text px-2 lg:px-3 py-2 rounded-md text-sm whitespace-nowrap">Catálogo</a>
-            <a routerLink="/catalog?type=movie" routerLinkActive="text-sv-red" class="text-sv-muted hover:text-sv-text px-2 lg:px-3 py-2 rounded-md text-sm whitespace-nowrap">Películas</a>
-            <a routerLink="/catalog?type=series" routerLinkActive="text-sv-red" class="text-sv-muted hover:text-sv-text px-2 lg:px-3 py-2 rounded-md text-sm whitespace-nowrap">Series</a>
-            <a routerLink="/search" routerLinkActive="text-sv-red" class="text-sv-muted hover:text-sv-text px-2 lg:px-3 py-2 rounded-md text-sm whitespace-nowrap">Buscar</a>
+        <div class="flex-1 mx-2 md:mx-4 overflow-x-auto scrollbar-hide">
+          <div class="flex items-center gap-2 md:gap-4 w-max">
+            <a routerLink="/catalog" routerLinkActive="text-sv-red" class="text-sv-muted hover:text-sv-text px-2 py-2 rounded-md text-sm whitespace-nowrap">Catálogo</a>
+            <a routerLink="/catalog?type=movie" routerLinkActive="text-sv-red" class="text-sv-muted hover:text-sv-text px-2 py-2 rounded-md text-sm whitespace-nowrap">Películas</a>
+            <a routerLink="/catalog?type=series" routerLinkActive="text-sv-red" class="text-sv-muted hover:text-sv-text px-2 py-2 rounded-md text-sm whitespace-nowrap">Series</a>
+            <a routerLink="/search" routerLinkActive="text-sv-red" class="text-sv-muted hover:text-sv-text px-2 py-2 rounded-md text-sm whitespace-nowrap">Buscar</a>
           </div>
         </div>
       }
       
-      <!-- Column 3: Action buttons (fixed, doesn't grow) -->
-      <div class="shrink-0 flex items-center gap-1 sm:gap-4">
+      <!-- Column 3: Action buttons -->
+      <div class="shrink-0 flex items-center gap-2 sm:gap-4">
         @if (isAuthenticated()) {
-          <!-- Notifications Dropdown -->
+          <!-- Notifications -->
           <div class="relative">
             <button 
               (click)="toggleNotifications()"
@@ -113,7 +113,7 @@
             }
           </div>
 
-          <!-- Send Message Button -->
+          <!-- Send Message -->
           <button 
             (click)="openSendMessageModal()"
             class="text-sv-muted hover:text-sv-text p-2 rounded-md transition-colors"
@@ -124,16 +124,15 @@
             </svg>
           </button>
 
-          <!-- User Menu Dropdown -->
+          <!-- User Menu -->
           <div class="relative">
             <button 
               (click)="toggleUserMenu()"
-              class="flex items-center gap-1 sm:gap-2 text-sv-muted hover:text-sv-text p-1.5 sm:p-2 rounded-md transition-colors"
+              class="flex items-center gap-2 text-sv-muted hover:text-sv-text p-2 rounded-md transition-colors"
             >
-              <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-sv-red flex items-center justify-center text-white text-xs sm:text-sm font-bold">
+              <div class="w-7 h-7 rounded-full bg-sv-red flex items-center justify-center text-white text-sm font-bold">
                 {{ currentUser()?.name?.charAt(0)?.toUpperCase() || '?' }}
               </div>
-              <span class="hidden sm:inline text-sm">{{ currentUser()?.name }}</span>
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 hidden sm:inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
