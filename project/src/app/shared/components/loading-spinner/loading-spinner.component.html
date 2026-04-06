@@ -1,0 +1,11 @@
+<div class="spinner-container" [class]="'spinner-container--' + size()">
+  <div 
+    class="spinner" 
+    [class]="'spinner--' + color()"
+    [style.width.px]="sizeValue"
+    [style.height.px]="sizeValue"
+  ></div>
+  @if (showLabel()) {
+    <span class="spinner__label">{{ label() }}</span>
+  }
+</div>
