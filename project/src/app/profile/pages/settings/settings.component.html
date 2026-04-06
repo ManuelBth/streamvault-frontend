@@ -1,4 +1,4 @@
-<div class="p-6 max-w-4xl mx-auto space-y-8">
+<div class="p-4 sm:p-6 max-w-4xl mx-auto space-y-6 md:space-y-8">
   <!-- Header -->
   <div class="border-b border-gray-800 pb-4">
     <h1 class="text-2xl font-bold text-white">Configuración</h1>
@@ -6,8 +6,8 @@
   </div>
 
   <!-- User Profile Section -->
-  <section class="bg-gray-900/50 rounded-lg p-6">
-    <h2 class="text-xl font-semibold text-white mb-4">Información del Perfil</h2>
+  <section class="bg-gray-900/50 rounded-lg p-4 md:p-6">
+    <h2 class="text-lg md:text-xl font-semibold text-white mb-4">Información del Perfil</h2>
     
     @if (userLoading()) {
       <div class="flex items-center justify-center py-8">
@@ -18,20 +18,20 @@
         {{ userError() }}
       </div>
     } @else if (user()) {
-      <div class="grid gap-6">
+      <div class="grid gap-4 md:gap-6">
         <!-- Display Mode -->
         @if (!editName() && !editEmail()) {
-          <div class="grid gap-4">
-            <div class="flex items-center">
-              <span class="text-gray-400 w-24">Nombre:</span>
+          <div class="grid gap-3 md:gap-4">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
+              <span class="text-gray-400 w-full sm:w-24">Nombre:</span>
               <span class="text-white">{{ user()?.name }}</span>
             </div>
-            <div class="flex items-center">
-              <span class="text-gray-400 w-24">Email:</span>
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
+              <span class="text-gray-400 w-full sm:w-24">Email:</span>
               <span class="text-white">{{ user()?.email }}</span>
             </div>
-            <div class="flex items-center">
-              <span class="text-gray-400 w-24">Rol:</span>
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
+              <span class="text-gray-400 w-full sm:w-24">Rol:</span>
               <span class="text-white capitalize">{{ user()?.role?.toLowerCase() }}</span>
             </div>
             <button 
@@ -60,7 +60,7 @@
                 class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:border-red-600"
               />
             </div>
-            <div class="flex gap-3">
+            <div class="flex flex-col sm:flex-row gap-3">
               <button 
                 (click)="saveProfile()"
                 [disabled]="updating()"
@@ -82,8 +82,8 @@
   </section>
 
   <!-- Subscription Section -->
-  <section class="bg-gray-900/50 rounded-lg p-6">
-    <h2 class="text-xl font-semibold text-white mb-4">Suscripción</h2>
+  <section class="bg-gray-900/50 rounded-lg p-4 md:p-6">
+    <h2 class="text-lg md:text-xl font-semibold text-white mb-4">Suscripción</h2>
     
     @if (subLoading()) {
       <div class="flex items-center justify-center py-8">
@@ -91,11 +91,11 @@
       </div>
     } @else if (subscription()) {
       <!-- Current subscription display -->
-      <div class="mb-6">
-        <div class="flex items-center justify-between p-4 rounded-lg" [class.bg-green-900/20]="subscription()?.active" [class.bg-gray-800/50]="!subscription()?.active">
+      <div class="mb-4 md:mb-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg" [class.bg-green-900/20]="subscription()?.active" [class.bg-gray-800/50]="!subscription()?.active">
           <div>
             <p class="text-gray-400 text-sm">Plan actual</p>
-            <p class="text-2xl font-bold" [class.text-green-400]="subscription()?.active" [class.text-gray-400]="!subscription()?.active">
+            <p class="text-xl md:text-2xl font-bold" [class.text-green-400]="subscription()?.active" [class.text-gray-400]="!subscription()?.active">
               {{ getPlanName(subscription()?.plan || 'FREE') }}
             </p>
             @if (subscription()?.active) {
@@ -104,7 +104,7 @@
               </p>
             }
           </div>
-          <div class="text-right">
+          <div class="text-left sm:text-right">
             @if (subscription()?.active) {
               <span class="inline-block px-3 py-1 bg-green-600/20 text-green-400 rounded-full text-sm">
                 Activa
