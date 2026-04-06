@@ -1,6 +1,9 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners, APP_INITIALIZER } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withFetch, withInterceptors, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { providePrimeNG } from 'primeng/config';
+import Aura from '@primeng/themes/aura';
 import { Observable } from 'rxjs';
 
 import { routes } from './app.routes';
@@ -27,6 +30,16 @@ export const appConfig: ApplicationConfig = {
         refreshInterceptor
       ])
     ),
+    provideAnimations(),
+    providePrimeNG({
+      theme: {
+        preset: Aura,
+        options: {
+          darkModeSelector: '.dark-mode',
+          cssLayer: false
+        }
+      }
+    }),
     {
       provide: APP_INITIALIZER,
       useFactory: initializeApp,

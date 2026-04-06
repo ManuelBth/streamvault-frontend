@@ -5,6 +5,8 @@ import { adminGuard } from './shared/guards/admin.guard';
 import { AuthLayoutComponent } from './shared/layout/auth-layout.component';
 import { MainLayoutComponent } from './shared/layout/main-layout.component';
 
+import { AdminLayoutComponent } from './shared/layout/admin-layout.component';
+
 export const routes: Routes = [
   // ── Públicas (Guest only) - with auth prefix ────────────────
   {
@@ -69,7 +71,7 @@ export const routes: Routes = [
   // ── Admin ─────────────────────────────────────────────────
   {
     path: 'admin',
-    component: MainLayoutComponent,
+    component: AdminLayoutComponent,
     canActivate: [adminGuard],
     loadChildren: () => import('./admin/admin.routes').then(m => m.ADMIN_ROUTES)
   },

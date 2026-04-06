@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply bg-sv-black text-sv-text font-sans;
+@layer base {
+  body {
+    @apply bg-sv-black text-sv-text font-sans;
+    margin: 0;
+    padding: 0;
+  }
 }
