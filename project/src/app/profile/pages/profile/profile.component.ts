@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 
 import { UserService } from '../../services/user.service';
 import { SubscriptionService } from '../../services/subscription.service';
-import { NotificationService } from '../../../notifications/services/notification.service';
+import { NotificationService } from '../../../shared/services/notification.service';
 
 @Component({
   selector: 'app-profile',

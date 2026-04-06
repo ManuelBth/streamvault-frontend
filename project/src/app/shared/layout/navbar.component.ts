@@ -2,12 +2,12 @@ import { Component, inject, signal, computed, OnDestroy, ViewChild } from '@angu
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../auth/services/auth.service';
-import { NotificationService } from '../../notifications/services/notification.service';
+import { NotificationService } from '../services/notification.service';
 import { WebSocketNotificationService } from '../../notifications/services/websocket-notification.service';
 import { ProfileService } from '../../profile/services/profile.service';
 import { SendMessageModalComponent } from '../../mail/components/send-message-modal/send-message-modal.component';
 import { currentUser, isAuthenticated, isAdmin, activeProfile } from '../../shared/store/app.store';
-import { Notification } from '../../notifications/models/notification.model';
+import { Notification } from '../models';
 import { Profile } from '../models';
 
 @Component({

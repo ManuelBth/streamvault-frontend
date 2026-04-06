@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NotificationService } from '../../services/notification.service';
+import { NotificationService } from '../../../shared/services/notification.service';
 import { NotificationListComponent } from '../../components/notification-list/notification-list.component';
 
 @Component({

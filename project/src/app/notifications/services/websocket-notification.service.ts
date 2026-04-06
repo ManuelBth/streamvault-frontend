@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { Notification } from '../models/notification.model';
-import { NotificationService } from './notification.service';
+import { NotificationService } from '../../shared/services/notification.service';
 import { TokenService } from '../../auth/services/token.service';
 import { currentUser, isAuthenticated } from '../../shared/store/app.store';
 import { WebSocketMessage } from '../models/websocket.model';
