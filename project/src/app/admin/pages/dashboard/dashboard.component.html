@@ -1,0 +1,59 @@
+<div class="dashboard-page">
+  <div class="page-header">
+    <h1>Dashboard</h1>
+    <p class="subtitle">Resumen del sistema</p>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Cargando estadísticas...</p>
+    </div>
+  } @else {
+    <app-dashboard-stats [stats]="stats()" />
+
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h3>Usuarios por Rol</h3>
+        <p>Usuarios vs Administradores</p>
+        <apx-chart
+          [series]="userRoleChartOptions.series!"
+          [chart]="userRoleChartOptions.chart!"
+          [xaxis]="userRoleChartOptions.xaxis!"
+          [colors]="userRoleChartOptions.colors!"
+          [plotOptions]="userRoleChartOptions.plotOptions!"
+          [dataLabels]="userRoleChartOptions.dataLabels!"
+          [legend]="userRoleChartOptions.legend!"
+        ></apx-chart>
+      </div>
+
+      <div class="chart-card">
+        <h3>Contenido por Género</h3>
+        <p>Distribución de contenido por género</p>
+        <apx-chart
+          [series]="genreChartOptions.series!"
+          [chart]="genreChartOptions.chart!"
+          [xaxis]="genreChartOptions.xaxis!"
+          [colors]="genreChartOptions.colors!"
+          [plotOptions]="genreChartOptions.plotOptions!"
+          [dataLabels]="genreChartOptions.dataLabels!"
+          [legend]="genreChartOptions.legend!"
+        ></apx-chart>
+      </div>
+
+      <div class="chart-card wide">
+        <h3>Tipo de Contenido</h3>
+        <p>Películas vs Series</p>
+        <apx-chart
+          [series]="contentTypeChartOptions.series!"
+          [chart]="contentTypeChartOptions.chart!"
+          [labels]="contentTypeChartOptions.labels!"
+          [colors]="contentTypeChartOptions.colors!"
+          [plotOptions]="contentTypeChartOptions.plotOptions!"
+          [legend]="contentTypeChartOptions.legend!"
+          [dataLabels]="contentTypeChartOptions.dataLabels!"
+        ></apx-chart>
+      </div>
+    </div>
+  }
+</div>

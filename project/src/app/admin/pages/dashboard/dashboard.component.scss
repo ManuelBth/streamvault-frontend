@@ -1,0 +1,112 @@
+.dashboard-page {
+  padding: 24px;
+}
+
+.page-header {
+  margin-bottom: 32px;
+
+  h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    margin: 0 0 8px 0;
+  }
+
+  .subtitle {
+    font-size: 0.875rem;
+    color: #B3B3B3;
+    margin: 0;
+  }
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.chart-card {
+  background-color: #1F1F1F;
+  border: 1px solid #333333;
+  border-radius: 8px;
+  padding: 20px;
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #FFFFFF;
+    margin: 0 0 4px 0;
+  }
+
+  p {
+    font-size: 0.75rem;
+    color: #B3B3B3;
+    margin: 0 0 16px 0;
+  }
+
+  &.wide {
+    grid-column: span 2;
+  }
+}
+
+:host ::ng-deep {
+  .apexcharts-xaxis-label,
+  .apexcharts-yaxis-label {
+    fill: #B3B3B3;
+  }
+
+  .apexcharts-tooltip {
+    background-color: #2C2C2C;
+    border-color: #333333;
+
+    .apexcharts-tooltip-title {
+      background-color: #1F1F1F;
+      border-color: #333333;
+      color: #FFFFFF;
+    }
+
+    .apexcharts-tooltip-text {
+      color: #FFFFFF;
+    }
+  }
+
+  .apexcharts-legend-text {
+    color: #B3B3B3 !important;
+  }
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px;
+  color: #B3B3B3;
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #333333;
+    border-top-color: #E50914;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 16px;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 1024px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-card.wide {
+    grid-column: span 1;
+  }
+}
