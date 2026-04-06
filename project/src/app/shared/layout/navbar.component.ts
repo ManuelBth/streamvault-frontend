@@ -32,6 +32,7 @@ export class NavbarComponent implements OnDestroy {
   isAdmin = isAdmin;
 
   showNotifications = signal(false);
+  showUserMenu = signal(false);
 
   constructor() {
     this.notificationService.loadAll();
@@ -49,11 +50,26 @@ export class NavbarComponent implements OnDestroy {
   readonly hasUnread = computed(() => this.unreadCount() > 0);
 
   toggleNotifications(): void {
+    this.showUserMenu.set(false);
     this.showNotifications.update(v => !v);
   }
 
   closeNotifications(): void {
     this.showNotifications.set(false);
+  }
+
+  toggleUserMenu(): void {
+    this.showNotifications.set(false);
+    this.showUserMenu.update(v => !v);
+  }
+
+  closeUserMenu(): void {
+    this.showUserMenu.set(false);
+  }
+
+  closeDropdowns(): void {
+    this.showNotifications.set(false);
+    this.showUserMenu.set(false);
   }
 
   markAsRead(id: string, event: Event): void {
@@ -77,6 +93,7 @@ export class NavbarComponent implements OnDestroy {
   }
 
   logout(): void {
+    this.showUserMenu.set(false);
     this.authService.logout();
   }
 
