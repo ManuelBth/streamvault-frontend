@@ -1,4 +1,4 @@
-export type PlanType = 'FREE' | 'PREMIUM';
+export type PlanType = 'FREE' | 'DEFAULT';
 
 export interface Plan {
   id: PlanType;
@@ -37,7 +37,7 @@ export const AVAILABLE_PLANS: Plan[] = [
     isPopular: false
   },
   {
-    id: 'PREMIUM',
+    id: 'DEFAULT',
     name: 'Premium',
     price: 10,
     priceDisplay: '$10/mes',

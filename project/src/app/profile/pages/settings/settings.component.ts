@@ -36,7 +36,8 @@ export class SettingsComponent implements OnInit {
   editName = signal('');
   editEmail = signal('');
   updating = signal(false);
-  purchaseLoading = signal(false);
+  // Track which plan is being loaded for UI feedback
+  loadingPlanId = signal<string | null>(null);
 
   ngOnInit(): void {
     this.userService.loadMe();
@@ -49,22 +50,20 @@ export class SettingsComponent implements OnInit {
   // Handle plan selection
   onSelectPlan(plan: Plan): void {
     if (plan.id === 'FREE') {
-      this.purchaseFreePlan();
+      // FREE plan - set locally without calling backend (backend always creates PREMIUM)
+      this.setFreePlanLocally();
     } else {
       this.selectedPlan.set(plan);
       this.showPaymentModal.set(true);
     }
   }
 
-  purchaseFreePlan(): void {
-    this.purchaseLoading.set(true);
-    this.subscriptionService.purchase('FREE').subscribe({
-      next: () => {
-        this.purchaseLoading.set(false);
-        this.subscriptionService.loadMySubscription();
-      },
-      error: () => this.purchaseLoading.set(false)
-    });
+  private setFreePlanLocally(): void {
+    // Create a local "free" subscription state (no backend call needed)
+    // The backend always creates DEFAULT plan, so we handle FREE locally
+    this.loadingPlanId.set('FREE');
+    this.subscriptionService.setFreePlanLocally();
+    this.loadingPlanId.set(null);
   }
 
   onPaymentSuccess(subscription: Subscription): void {
@@ -123,7 +122,7 @@ export class SettingsComponent implements OnInit {
 
   getPlanColor(plan: string): string {
     switch (plan) {
-      case 'PREMIUM': return 'text-yellow-400';
+      case 'DEFAULT': return 'text-yellow-400';
       case 'BASIC': return 'text-blue-400';
       default: return 'text-gray-400';
     }
@@ -131,7 +130,7 @@ export class SettingsComponent implements OnInit {
 
   getPlanName(plan: string): string {
     switch (plan) {
-      case 'PREMIUM': return 'Premium';
+      case 'DEFAULT': return 'Premium';
       case 'BASIC': return 'Básico';
       default: return 'Gratis';
     }

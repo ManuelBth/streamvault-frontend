@@ -40,9 +40,12 @@ import { Plan, Subscription } from '../../models/subscription.model';
             <button 
               class="select-btn"
               [class.btn-primary]="plan.isPopular && !isCurrentPlan(plan)"
-              [disabled]="isCurrentPlan(plan)"
+              [disabled]="isCurrentPlan(plan) || loadingPlanId() === plan.id"
               (click)="onSelectPlan(plan)"
             >
+              @if (loadingPlanId() === plan.id) {
+                <span class="inline-block animate-spin mr-2">⟳</span>
+              }
               {{ isCurrentPlan(plan) ? 'Plan actual' : (plan.id === 'FREE' ? 'Comenzar gratis' : 'Elegir Plan') }}
             </button>
           </div>
@@ -202,6 +205,8 @@ import { Plan, Subscription } from '../../models/subscription.model';
 export class PlanSelectorComponent {
   plans = input.required<Plan[]>();
   currentSubscription = input<Subscription | null | undefined>(null);
+  // Input to show loading state - pass the plan ID that's currently loading
+  loadingPlanId = input<string | null>(null);
   
   selectPlan = output<Plan>();
 
