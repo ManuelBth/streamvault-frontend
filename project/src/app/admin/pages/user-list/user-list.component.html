@@ -1,0 +1,137 @@
+<div class="user-list-page">
+  <p-toast />
+  <p-confirmDialog />
+
+  <div class="page-header">
+    <h1>Usuarios</h1>
+    <p class="subtitle">Gestiona los usuarios del sistema</p>
+  </div>
+
+  <div class="table-container">
+    @if (isLoading()) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Cargando usuarios...</p>
+      </div>
+    } @else if (users().length === 0) {
+      <div class="empty-state">
+        <span class="material-icons">people</span>
+        <p>No hay usuarios registrados</p>
+      </div>
+    } @else {
+      <p-table 
+        [value]="users()" 
+        [paginator]="true"
+        [rows]="pageSize()"
+        [showCurrentPageReport]="true"
+        [rowsPerPageOptions]="[10, 20, 50]"
+        [totalRecords]="totalElements()"
+        [loading]="isLoading()"
+        [first]="first()"
+        (onPage)="onPageChange($event)"
+        [tableStyle]="{ 'min-width': '60rem' }"
+        styleClass="p-datatable-striped"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="email">Email <p-sortIcon field="email" /></th>
+            <th pSortableColumn="name">Nombre <p-sortIcon field="name" /></th>
+            <th>Rol</th>
+            <th>Verificado</th>
+            <th pSortableColumn="createdAt">Fecha de Registro <p-sortIcon field="createdAt" /></th>
+            <th>Acciones</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-user>
+          <tr>
+            <td>{{ user.email }}</td>
+            <td>{{ user.name }}</td>
+            <td>
+              <span class="role-badge" [class.admin]="user.role === 'ROLE_ADMIN'">
+                {{ user.role === 'ROLE_ADMIN' ? 'Admin' : 'Usuario' }}
+              </span>
+            </td>
+            <td>
+              @if (user.isVerified) {
+                <span class="verified-badge">
+                  <span class="material-icons">check_circle</span>
+                  Verificado
+                </span>
+              } @else {
+                <span class="unverified-badge">
+                  <span class="material-icons">cancel</span>
+                  No verificado
+                </span>
+              }
+            </td>
+            <td>{{ user.createdAt | date:'dd/MM/yyyy' }}</td>
+            <td>
+              <div class="action-buttons">
+                <button pButton icon="pi pi-eye" label="Ver detalles" class="p-button-info p-button-sm" (click)="onViewUser(user)"></button>
+                <button pButton icon="pi pi-bell" label="Notificar" class="p-button-success p-button-sm" (click)="onNotifyUser(user)"></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6" class="text-center">No hay usuarios registrados.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    }
+  </div>
+
+  <!-- Notification Dialog -->
+  <p-dialog 
+    header="Enviar Notificación" 
+    [(visible)]="showNotificationDialog" 
+    [modal]="true" 
+    [style]="{ width: '450px' }"
+    [draggable]="false"
+    [resizable]="false"
+  >
+    <div class="notification-form">
+      <div class="form-field">
+        <label for="notificationTitle">Título *</label>
+        <input 
+          id="notificationTitle"
+          pInputText 
+          [(ngModel)]="notificationTitle" 
+          placeholder="Ingrese el título de la notificación"
+          class="w-full"
+        />
+      </div>
+      <div class="form-field">
+        <label for="notificationMessage">Mensaje *</label>
+        <textarea 
+          id="notificationMessage"
+          pInputTextarea 
+          [(ngModel)]="notificationMessage" 
+          placeholder="Ingrese el mensaje de la notificación"
+          rows="4"
+          class="w-full"
+        ></textarea>
+      </div>
+      @if (selectedUser) {
+        <p class="user-info">Notificando a: <strong>{{ selectedUser.name }}</strong> ({{ selectedUser.email }})</p>
+      }
+    </div>
+    <ng-template pTemplate="footer">
+      <button 
+        pButton 
+        label="Cancelar" 
+        class="p-button-text" 
+        (click)="cancelNotification()"
+        [disabled]="isSendingNotification"
+      ></button>
+      <button 
+        pButton 
+        label="Enviar" 
+        icon="pi pi-send" 
+        (click)="sendNotification()"
+        [loading]="isSendingNotification"
+      ></button>
+    </ng-template>
+  </p-dialog>
+</div>
