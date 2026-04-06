@@ -3,14 +3,22 @@ import { Routes } from '@angular/router';
 export const ADMIN_ROUTES: Routes = [
   {
     path: '',
-    loadComponent: () => import('./pages/admin/admin.component').then(m => m.AdminComponent)
-  },
-  {
-    path: 'users',
-    loadComponent: () => import('./pages/admin-users/admin-users.component').then(m => m.AdminUsersComponent)
+    loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent)
   },
   {
     path: 'content',
-    loadComponent: () => import('./pages/admin-content/admin-content.component').then(m => m.AdminContentComponent)
+    loadComponent: () => import('./pages/content-list/content-list.component').then(m => m.ContentListComponent)
+  },
+  {
+    path: 'content/new',
+    loadComponent: () => import('./pages/content-form/content-form.component').then(m => m.ContentFormComponent)
+  },
+  {
+    path: 'content/:id/edit',
+    loadComponent: () => import('./pages/content-form/content-form.component').then(m => m.ContentFormComponent)
+  },
+  {
+    path: 'users',
+    loadComponent: () => import('./pages/user-list/user-list.component').then(m => m.UserListComponent)
   }
 ];
