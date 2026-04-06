@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal, computed } from '@angular/core';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { Notification, BroadcastNotification } from '../models';
+import { Notification } from '../models';
 
 export type LoadingState<T> = {
   state: 'idle' | 'loading' | 'success' | 'error';
@@ -15,7 +15,6 @@ export type LoadingState<T> = {
 export class NotificationService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/notifications`;
-  private adminApiUrl = `${environment.apiUrl}/admin/notifications`;
 
   private _notifications = signal<LoadingState<Notification[]>>({ state: 'idle', data: undefined });
   private _unreadCount = signal<number>(0);
@@ -37,35 +36,13 @@ export class NotificationService {
     return this.http.get<Notification[]>(this.apiUrl);
   }
 
-  getBroadcasts(): Observable<BroadcastNotification[]> {
-    return this.http.get<BroadcastNotification[]>(`${this.adminApiUrl}/broadcast`);
-  }
-
   loadAll(): void {
     this._notifications.set({ state: 'loading', data: undefined });
 
-    // Fetch both user notifications and broadcast notifications in parallel
-    forkJoin({
-      userNotifications: this.getAll(),
-      broadcastNotifications: this.getBroadcasts()
-    }).subscribe({
-      next: ({ userNotifications, broadcastNotifications }) => {
-        // Combine both types, converting broadcast to notification format
-        const broadcasts: Notification[] = broadcastNotifications.map(b => ({
-          id: b.id,
-          type: 'info' as const,
-          title: b.title,
-          message: b.message,
-          relatedId: b.relatedId,
-          isRead: true, // Broadcasts are always "read" for the badge count
-          createdAt: b.createdAt
-        }));
-
-        // Sort by createdAt descending
-        const allNotifications = [...userNotifications, ...broadcasts]
-          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-
-        this._notifications.set({ state: 'success', data: allNotifications });
+    // Fetch user notifications only (no GET endpoint for broadcasts)
+    this.getAll().subscribe({
+      next: (userNotifications) => {
+        this._notifications.set({ state: 'success', data: userNotifications });
       },
       error: (err) => this._notifications.set({ state: 'error', error: err.message })
     });
