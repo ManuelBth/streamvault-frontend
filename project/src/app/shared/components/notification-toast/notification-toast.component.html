@@ -1,0 +1,11 @@
+@if (visible()) {
+  <div class="toast" [class]="'toast--' + type()">
+    <span class="toast__icon">{{ icon }}</span>
+    <span class="toast__message">{{ message() }}</span>
+    @if (dismissible()) {
+      <button class="toast__close" (click)="dismiss()" aria-label="Cerrar">
+        ✕
+      </button>
+    }
+  </div>
+}
