@@ -47,9 +47,9 @@
           Reproducir
         </button>
         <button
-          (click)="onSelect.emit(content())"
           class="bg-sv-card hover:bg-sv-border text-sv-text px-6 py-3 
-                 rounded font-semibold flex items-center gap-2 transition-colors"
+                 rounded font-semibold flex items-center gap-2 transition-colors cursor-pointer"
+          (click)="toggleTooltip($event)"
         >
           <span>ℹ</span>
           Más información
@@ -58,3 +58,25 @@
     </div>
   </div>
 </div>
+
+<!-- Custom Tooltip - centrado en pantalla -->
+@if (showTooltip()) {
+  <div 
+    class="fixed z-50 bg-sv-card border border-sv-border rounded-lg p-3 min-w-[280px] max-w-[320px] shadow-xl"
+    style="top: 50%; left: 50%; transform: translate(-50%, -50%);"
+    (click)="$event.stopPropagation()"
+  >
+    <app-content-tooltip 
+      [content]="content()"
+      (onSelect)="handleSelectFromTooltip($event)"
+    />
+  </div>
+}
+
+<!-- Click outside to close -->
+@if (showTooltip()) {
+  <div 
+    class="fixed inset-0 z-40"
+    (click)="closeTooltip()"
+  ></div>
+}

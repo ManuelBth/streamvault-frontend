@@ -1,0 +1,32 @@
+.content-tooltip {
+  @apply min-w-[280px] max-w-[320px] p-3 bg-sv-card border border-sv-border rounded-lg cursor-pointer;
+  @apply hover:bg-sv-border/50 transition-colors;
+}
+
+.tooltip-type {
+  @apply inline-flex items-center gap-1.5 mb-2;
+}
+
+.type-icon {
+  @apply text-sm;
+}
+
+.type-label {
+  @apply text-xs font-semibold uppercase tracking-wider text-sv-red;
+}
+
+.tooltip-title {
+  @apply text-sv-text font-bold text-base mb-2 line-clamp-1;
+}
+
+.tooltip-meta {
+  @apply flex items-center gap-2 text-xs text-sv-muted mb-3;
+}
+
+.meta-divider {
+  @apply text-sv-border;
+}
+
+.tooltip-description {
+  @apply text-sv-muted text-sm leading-relaxed line-clamp-3;
+}

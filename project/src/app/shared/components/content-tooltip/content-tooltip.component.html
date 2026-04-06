@@ -1,0 +1,22 @@
+<div class="content-tooltip" (click)="handleSelect()">
+  <!-- Tipo -->
+  <div class="tooltip-type">
+    <span class="type-icon">{{ typeIcon }}</span>
+    <span class="type-label">{{ typeLabel }}</span>
+  </div>
+
+  <!-- Título -->
+  <h3 class="tooltip-title">{{ content().title }}</h3>
+
+  <!-- Metadatos -->
+  <div class="tooltip-meta">
+    <span class="meta-year">{{ content().releaseYear }}</span>
+    <span class="meta-divider">|</span>
+    <span class="meta-rating">{{ content().rating }}</span>
+    <span class="meta-divider">|</span>
+    <span class="meta-genre">{{ firstGenre }}</span>
+  </div>
+
+  <!-- Descripción -->
+  <p class="tooltip-description">{{ content().description }}</p>
+</div>

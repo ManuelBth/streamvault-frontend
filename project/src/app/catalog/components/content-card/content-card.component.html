@@ -33,11 +33,33 @@
       </button>
       <button
         class="flex-1 border border-sv-muted text-sv-text text-xs
-               py-1 rounded hover:border-sv-text transition-colors"
-        (click)="$event.stopPropagation(); onSelect.emit(content())"
+               py-1 rounded hover:border-sv-text transition-colors cursor-pointer"
+        (click)="$event.stopPropagation(); toggleTooltip($event)"
       >
         + Info
       </button>
     </div>
   </div>
 </div>
+
+<!-- Custom Tooltip - Fuera de la card para que no se corte -->
+@if (showTooltip()) {
+  <div 
+    class="fixed z-50 bg-sv-card border border-sv-border rounded-lg p-3 min-w-[280px] max-w-[320px] shadow-xl"
+    style="top: 50%; left: 50%; transform: translate(-50%, -50%);"
+    (click)="$event.stopPropagation()"
+  >
+    <app-content-tooltip 
+      [content]="content()"
+      (onSelect)="handleSelectFromTooltip($event)"
+    />
+  </div>
+}
+
+<!-- Click outside to close -->
+@if (showTooltip()) {
+  <div 
+    class="fixed inset-0 z-40"
+    (click)="closeTooltip()"
+  ></div>
+}
