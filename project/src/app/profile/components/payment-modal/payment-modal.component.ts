@@ -380,11 +380,11 @@ export class PaymentModalComponent {
 
   state = signal<PaymentState>('idle');
   
-  // Form fields
-  cardNumber = '';
-  expiry = '';
-  cvv = '';
-  cardName = '';
+  // Form fields - hardcoded for simulation
+  cardNumber = '4532 1234 5678 9012';
+  expiry = '12/28';
+  cvv = '123';
+  cardName = 'Juan Pérez';
 
   get today(): Date {
     return new Date();
@@ -402,8 +402,7 @@ export class PaymentModalComponent {
   }
 
   onSubmit(): void {
-    if (!this.isFormValid()) return;
-    
+    // Always valid since we have hardcoded test data
     const planType = this.selectedPlan().id;
     
     this.state.set('processing');
@@ -437,9 +436,9 @@ export class PaymentModalComponent {
 
   resetState(): void {
     this.state.set('idle');
-    this.cardNumber = '';
-    this.expiry = '';
-    this.cvv = '';
-    this.cardName = '';
+    this.cardNumber = '4532 1234 5678 9012';
+    this.expiry = '12/28';
+    this.cvv = '123';
+    this.cardName = 'Juan Pérez';
   }
 }
