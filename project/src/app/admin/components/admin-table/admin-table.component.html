@@ -1,0 +1,41 @@
+<div class="table-container">
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Cargando...</p>
+    </div>
+  } @else if (rows().length === 0) {
+    <div class="empty-state">
+      <span class="material-icons">inbox</span>
+      <p>No hay datos disponibles</p>
+    </div>
+  } @else {
+    <table class="admin-table">
+      <thead>
+        <tr>
+          @for (col of columns(); track col) {
+            <th>{{ col }}</th>
+          }
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of rows(); track $index) {
+          <tr>
+            @for (col of columns(); track col) {
+              <td>{{ row[col.toLowerCase()] }}</td>
+            }
+            <td class="actions-cell">
+              <button class="action-btn edit-btn" (click)="onEdit.emit(row)">
+                <span class="material-icons">edit</span>
+              </button>
+              <button class="action-btn delete-btn" (click)="onDelete.emit(row)">
+                <span class="material-icons">delete</span>
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

@@ -1,0 +1,63 @@
+<div class="table-container">
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Cargando usuarios...</p>
+    </div>
+  } @else if (users().length === 0) {
+    <div class="empty-state">
+      <span class="material-icons">people</span>
+      <p>No hay usuarios registrados</p>
+    </div>
+  } @else {
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Nombre</th>
+          <th>Rol</th>
+          <th>Verificado</th>
+          <th>Fecha de Registro</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (user of users(); track user.id) {
+          <tr>
+            <td>{{ user.email }}</td>
+            <td>{{ user.name }}</td>
+            <td>
+              <span class="role-badge" [class.admin]="user.role === 'ROLE_ADMIN'">
+                {{ user.role === 'ROLE_ADMIN' ? 'Admin' : 'Usuario' }}
+              </span>
+            </td>
+            <td>
+              @if (user.isVerified) {
+                <span class="verified-badge">
+                  <span class="material-icons">check_circle</span>
+                  Verificado
+                </span>
+              } @else {
+                <span class="unverified-badge">
+                  <span class="material-icons">cancel</span>
+                  No verificado
+                </span>
+              }
+            </td>
+            <td>{{ user.createdAt | date:'dd/MM/yyyy' }}</td>
+            <td class="actions-cell">
+              <button class="action-btn view-btn" (click)="onView.emit(user)">
+                <span class="material-icons">visibility</span>
+                Ver detalles
+              </button>
+              <button class="action-btn notify-btn" (click)="onNotify.emit(user)">
+                <span class="material-icons">notifications</span>
+                Enviar notificación
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

@@ -1,0 +1,90 @@
+.progress-container {
+  background-color: #1F1F1F;
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid #333333;
+}
+
+.progress-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.status-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  
+  .material-icons {
+    font-size: 20px;
+  }
+  
+  &.uploading {
+    color: #B3B3B3;
+    
+    .material-icons {
+      animation: spin 1s linear infinite;
+    }
+  }
+  
+  &.success {
+    color: #4CAF50;
+  }
+  
+  &.error {
+    color: #E50914;
+  }
+}
+
+.status-text {
+  font-size: 0.875rem;
+  color: #FFFFFF;
+  font-weight: 500;
+  flex: 1;
+}
+
+.progress-percent {
+  font-size: 0.875rem;
+  color: #B3B3B3;
+}
+
+.filename {
+  font-size: 0.875rem;
+  color: #B3B3B3;
+  margin: 0 0 12px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.progress-bar {
+  height: 6px;
+  background-color: #333333;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #E50914;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+  
+  &.success {
+    background-color: #4CAF50;
+  }
+  
+  &.error {
+    background-color: #E50914;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,37 @@
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">
+      <span class="logo-icon">▶</span>
+      <span class="logo-text">StreamVault</span>
+    </div>
+    <span class="logo-subtitle">Admin Panel</span>
+  </div>
+  
+  <div class="user-info">
+    <div class="user-avatar">
+        <i class="pi pi-user"></i>
+    </div>
+    <div class="user-details">
+      <span class="user-name">Administrador</span>
+      <span class="user-role">Admin</span>
+    </div>
+  </div>
+  
+  <nav class="sidebar-nav">
+    @for (item of navItems; track item.route) {
+      <a 
+        [routerLink]="item.route" 
+        [routerLinkActiveOptions]="{ exact: item.route === '/admin' }"
+        routerLinkActive="active"
+        class="nav-item"
+      >
+        <i class="{{ item.icon }}"></i>
+        <span class="nav-label">{{ item.label }}</span>
+      </a>
+    }
+  </nav>
+
+  <div class="sidebar-footer">
+    <button pButton icon="pi pi-arrow-left" label="Volver al Catálogo" class="logout-btn" (click)="onLogout()"></button>
+  </div>
+</aside>

@@ -1,0 +1,32 @@
+<div class="progress-container">
+  <div class="progress-header">
+    @if (uploading()) {
+      <span class="status-icon uploading">
+        <span class="material-icons">sync</span>
+      </span>
+      <span class="status-text">Subiendo...</span>
+    } @else if (progress() >= 100) {
+      <span class="status-icon success">
+        <span class="material-icons">check_circle</span>
+      </span>
+      <span class="status-text">Completado</span>
+    } @else {
+      <span class="status-icon error">
+        <span class="material-icons">error</span>
+      </span>
+      <span class="status-text">Error</span>
+    }
+    <span class="progress-percent">{{ progress() }}%</span>
+  </div>
+  
+  <p class="filename">{{ filename() }}</p>
+  
+  <div class="progress-bar">
+    <div 
+      class="progress-fill"
+      [class.success]="progress() >= 100 && !uploading()"
+      [class.error]="progress() < 100 && !uploading()"
+      [style.width.%]="progress()"
+    ></div>
+  </div>
+</div>
