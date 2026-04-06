@@ -1,0 +1,89 @@
+<div class="content-list-page">
+  <p-toast />
+  <p-confirmDialog />
+
+  <div class="page-header">
+    <div class="header-content">
+      <h1>Contenido</h1>
+      <p class="subtitle">Gestiona el catálogo de contenido</p>
+    </div>
+    <a routerLink="/admin/content/new" class="add-button">
+      <span class="material-icons">add</span>
+      Agregar Contenido
+    </a>
+  </div>
+
+  <div class="table-container">
+    @if (isLoading()) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Cargando contenido...</p>
+      </div>
+    } @else if (contents().length === 0) {
+      <div class="empty-state">
+        <span class="material-icons">movie</span>
+        <p>No hay contenido disponible</p>
+        <a routerLink="/admin/content/new" class="add-button">Agregar primer contenido</a>
+      </div>
+    } @else {
+      <p-table 
+        [value]="contents()" 
+        [paginator]="true"
+        [rows]="pageSize()"
+        [showCurrentPageReport]="true"
+        [rowsPerPageOptions]="[10, 20, 50]"
+        [totalRecords]="totalElements()"
+        [loading]="isLoading()"
+        [first]="first()"
+        (onPage)="onPageChange($event)"
+        [tableStyle]="{ 'min-width': '60rem' }"
+        [globalFilterFields]="['title', 'releaseYear']"
+        styleClass="p-datatable-striped"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="title">Título <p-sortIcon field="title" /></th>
+            <th pSortableColumn="type">Tipo <p-sortIcon field="type" /></th>
+            <th pSortableColumn="releaseYear">Año <p-sortIcon field="releaseYear" /></th>
+            <th>Género</th>
+            <th pSortableColumn="status">Estado <p-sortIcon field="status" /></th>
+            <th>Acciones</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-content>
+          <tr>
+            <td class="title-cell">
+              <span class="title">{{ content.title }}</span>
+            </td>
+            <td>
+              <span class="type-badge" [class.movie]="content.type === 'MOVIE'" [class.series]="content.type === 'SERIES'">
+                {{ content.type === 'MOVIE' ? 'Película' : 'Serie' }}
+              </span>
+            </td>
+            <td>{{ content.releaseYear }}</td>
+            <td>{{ getGenreNames(content.genres) }}</td>
+            <td>
+              <span class="status-badge" 
+                [class.draft]="content.status === 'DRAFT'"
+                [class.published]="content.status === 'PUBLISHED'"
+                [class.unpublished]="content.status === 'UNPUBLISHED'">
+                {{ content.status === 'DRAFT' ? 'Borrador' : content.status === 'PUBLISHED' ? 'Publicado' : 'Despublicado' }}
+              </span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button pButton icon="pi pi-pencil" label="Editar" class="p-button-secondary p-button-sm" (click)="onEdit(content)"></button>
+                <button pButton icon="pi pi-trash" label="Eliminar" class="p-button-danger p-button-sm p-button-outlined" (click)="onDelete(content)"></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6" class="text-center">No hay contenido disponible.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    }
+  </div>
+</div>

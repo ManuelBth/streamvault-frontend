@@ -1,0 +1,246 @@
+.content-list-page {
+  padding: 24px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+
+  .header-content {
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin: 0 0 8px 0;
+    }
+
+    .subtitle {
+      font-size: 0.875rem;
+      color: #B3B3B3;
+      margin: 0;
+    }
+  }
+}
+
+.add-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background-color: #E50914;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+
+  .material-icons {
+    font-size: 20px;
+  }
+
+  &:hover {
+    background-color: #f40612;
+  }
+}
+
+.table-container {
+  background-color: #1F1F1F;
+  border-radius: 8px;
+  border: 1px solid #333333;
+  overflow: hidden;
+}
+
+.title-cell {
+  .title {
+    font-weight: 500;
+  }
+}
+
+.type-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+
+  &.movie {
+    background-color: rgba(229, 9, 20, 0.15);
+    color: #E50914;
+  }
+
+  &.series {
+    background-color: rgba(79, 70, 229, 0.15);
+    color: #6366F1;
+  }
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  &.draft {
+    background-color: rgba(156, 163, 175, 0.15);
+    color: #9CA3AF;
+  }
+
+  &.published {
+    background-color: rgba(34, 197, 94, 0.15);
+    color: #22C55E;
+  }
+
+  &.unpublished {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #EF4444;
+  }
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  border-top: 1px solid #333333;
+}
+
+.loading-state,
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px;
+  color: #B3B3B3;
+
+  .material-icons {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+}
+
+.empty-state {
+  .add-button {
+    margin-top: 16px;
+  }
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #333333;
+  border-top-color: #E50914;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+:host ::ng-deep {
+  .p-datatable-striped {
+    .p-datatable-thead > tr > th {
+      background-color: #2C2C2C;
+      color: #B3B3B3;
+      border-color: #333333;
+      padding: 16px;
+    }
+
+    .p-datatable-tbody > tr {
+      background-color: #1F1F1F;
+      color: #FFFFFF;
+      border-color: #333333;
+
+      &:nth-child(even) {
+        background-color: #252525;
+      }
+
+      &:hover {
+        background-color: #2C2C2C;
+      }
+
+      > td {
+        border-color: #333333;
+        padding: 16px;
+      }
+    }
+
+    .p-paginator {
+      background-color: #1F1F1F;
+      border-color: #333333;
+      color: #B3B3B3;
+
+      .p-paginator-element {
+        color: #B3B3B3;
+        border-color: #333333;
+
+        &:hover {
+          background-color: #2C2C2C;
+        }
+
+        &.p-highlight {
+          background-color: #E50914;
+          border-color: #E50914;
+          color: #FFFFFF;
+        }
+      }
+    }
+
+    .p-sortable-column {
+      &:hover {
+        background-color: #2C2C2C !important;
+      }
+
+      &.p-highlight {
+        background-color: #2C2C2C;
+        color: #E50914;
+      }
+    }
+  }
+
+  .p-button {
+    &.p-button-secondary {
+      background-color: #2C2C2C;
+      border-color: #333333;
+      color: #FFFFFF;
+
+      &:hover {
+        background-color: #3C3C3C;
+        border-color: #3C3C3C;
+      }
+    }
+
+    &.p-button-danger.p-button-outlined {
+      background-color: transparent;
+      border-color: #E50914;
+      color: #E50914;
+
+      &:hover {
+        background-color: rgba(229, 9, 20, 0.1);
+      }
+    }
+  }
+
+  .p-confirmdialog {
+    .p-confirmdialog-message {
+      color: #FFFFFF;
+    }
+  }
+}

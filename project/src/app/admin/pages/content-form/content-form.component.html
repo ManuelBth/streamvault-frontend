@@ -1,0 +1,146 @@
+<div class="content-form-page">
+  <div class="page-header">
+    <h1>{{ isEditMode() ? 'Editar Contenido' : 'Nuevo Contenido' }}</h1>
+    <p class="subtitle">{{ isEditMode() ? 'Actualiza los datos del contenido' : 'Agrega un nuevo elemento al catálogo' }}</p>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Cargando...</p>
+    </div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="content-form">
+      <div class="form-grid">
+        <div class="form-section">
+          <h3>Información Principal</h3>
+          
+          <div class="form-group">
+            <label for="title">Título *</label>
+            <input 
+              type="text" 
+              id="title" 
+              formControlName="title"
+              placeholder="Ingresa el título"
+              [class.error]="form.get('title')?.touched && form.get('title')?.invalid"
+            />
+            @if (form.get('title')?.touched && form.get('title')?.invalid) {
+              <span class="error-message">El título es requerido (mínimo 3 caracteres)</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="description">Descripción</label>
+            <textarea 
+              id="description" 
+              formControlName="description"
+              placeholder="Ingresa una descripción"
+              rows="4"
+            ></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="type">Tipo *</label>
+              <select id="type" formControlName="type">
+                @for (type of contentTypes; track type.value) {
+                  <option [value]="type.value">{{ type.label }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="releaseYear">Año de Estreno *</label>
+              <input 
+                type="number" 
+                id="releaseYear" 
+                formControlName="releaseYear"
+                min="1900"
+                max="2100"
+                [class.error]="form.get('releaseYear')?.touched && form.get('releaseYear')?.invalid"
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="rating">Clasificación</label>
+              <input 
+                type="text" 
+                id="rating" 
+                formControlName="rating"
+                placeholder="ej. PG-13, R, ATP"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="status">Estado *</label>
+              <select id="status" formControlName="status">
+                @for (status of contentStatuses; track status.value) {
+                  <option [value]="status.value">{{ status.label }}</option>
+                }
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3>Géneros</h3>
+          <div class="genre-grid">
+            @for (genre of genreOptions; track genre.id) {
+              <label class="genre-checkbox">
+                <input 
+                  type="checkbox" 
+                  [checked]="isGenreSelected(genre.id)"
+                  (change)="onGenreChange(genre.id, $event)"
+                />
+                <span class="checkbox-label">{{ genre.name }}</span>
+              </label>
+            }
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3>Imagen de Portada</h3>
+          <app-upload-dropzone (fileSelected)="onFileSelected($event)" />
+          
+          @if (isUploading()) {
+            <app-upload-progress 
+              [progress]="uploadProgress()" 
+              [filename]="uploadFilename()"
+              [uploading]="isUploading()"
+            />
+          }
+
+          @if (form.get('thumbnailKey')?.value) {
+            <div class="upload-success">
+              <span class="material-icons">check_circle</span>
+              <span>Imagen subida correctamente</span>
+            </div>
+          }
+
+          @if (uploadError()) {
+            <div class="upload-error">
+              <span class="material-icons">error</span>
+              <span>{{ uploadError() }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="cancel()">
+          Cancelar
+        </button>
+        <button type="submit" class="btn-submit" [disabled]="isSaving()">
+          @if (isSaving()) {
+            <div class="spinner-small"></div>
+            Guardando...
+          } @else {
+            {{ isEditMode() ? 'Actualizar' : 'Crear' }}
+          }
+        </button>
+      </div>
+    </form>
+  }
+</div>
