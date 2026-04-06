@@ -249,8 +249,31 @@ export type PaymentState = 'idle' | 'processing' | 'success' | 'error';
     
     .form-row {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
+      grid-template-columns: 1fr 100px;
+      gap: 12px;
+    }
+    
+    @media (max-width: 480px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      
+      .modal-content {
+        padding: 24px 20px;
+      }
+      
+      .modal-header h2 {
+        font-size: 20px;
+      }
+      
+      .order-summary .plan-price {
+        font-size: 24px;
+      }
+      
+      .pay-btn {
+        padding: 14px;
+        font-size: 15px;
+      }
     }
     
     .pay-btn {
