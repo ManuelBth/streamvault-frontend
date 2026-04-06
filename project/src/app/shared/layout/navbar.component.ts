@@ -4,9 +4,11 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../auth/services/auth.service';
 import { NotificationService } from '../../notifications/services/notification.service';
 import { WebSocketNotificationService } from '../../notifications/services/websocket-notification.service';
+import { ProfileService } from '../../profile/services/profile.service';
 import { SendMessageModalComponent } from '../../mail/components/send-message-modal/send-message-modal.component';
-import { currentUser, isAuthenticated, isAdmin } from '../../shared/store/app.store';
+import { currentUser, isAuthenticated, isAdmin, activeProfile } from '../../shared/store/app.store';
 import { Notification } from '../../notifications/models/notification.model';
+import { Profile } from '../models';
 
 @Component({
   selector: 'app-navbar',
@@ -24,17 +26,25 @@ export class NavbarComponent implements OnDestroy {
   private notificationService = inject(NotificationService);
   private webSocketService = inject(WebSocketNotificationService);
   private router = inject(Router);
+  private profileService = inject(ProfileService);
   
   @ViewChild(SendMessageModalComponent) sendMessageModal!: SendMessageModalComponent;
 
   currentUser = currentUser;
   isAuthenticated = isAuthenticated;
   isAdmin = isAdmin;
+  activeProfile = activeProfile;
 
   showNotifications = signal(false);
   showUserMenu = signal(false);
+  showProfileMenu = signal(false);
 
   constructor() {
+    const profilesState = this.profileService.profiles();
+    if (profilesState.state === 'idle') {
+      this.profileService.loadProfiles();
+    }
+    
     this.notificationService.loadAll();
     this.notificationService.loadUnreadCount();
   }
@@ -48,6 +58,7 @@ export class NavbarComponent implements OnDestroy {
 
   readonly unreadCount = this.notificationService.unreadCount;
   readonly hasUnread = computed(() => this.unreadCount() > 0);
+  readonly profiles = computed(() => this.profileService.profiles());
 
   toggleNotifications(): void {
     this.showUserMenu.set(false);
@@ -67,9 +78,34 @@ export class NavbarComponent implements OnDestroy {
     this.showUserMenu.set(false);
   }
 
+  toggleProfileMenu(): void {
+    this.showNotifications.set(false);
+    this.showProfileMenu.update(v => !v);
+  }
+
+  closeProfileMenu(): void {
+    this.showProfileMenu.set(false);
+  }
+
+  switchProfile(profile: Profile): void {
+    this.profileService.selectProfile(profile);
+    this.showProfileMenu.set(false);
+  }
+
+  goToManageProfiles(): void {
+    this.showProfileMenu.set(false);
+    this.router.navigate(['/profile/manage']);
+  }
+
+  goToProfileSelect(): void {
+    this.showProfileMenu.set(false);
+    this.router.navigate(['/profile/select']);
+  }
+
   closeDropdowns(): void {
     this.showNotifications.set(false);
     this.showUserMenu.set(false);
+    this.showProfileMenu.set(false);
   }
 
   markAsRead(id: string, event: Event): void {

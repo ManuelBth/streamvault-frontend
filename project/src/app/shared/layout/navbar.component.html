@@ -124,6 +124,85 @@
             </svg>
           </button>
 
+          <!-- Profile Selector -->
+          @if (activeProfile()) {
+            <div class="relative">
+              <button 
+                (click)="toggleProfileMenu()"
+                class="flex items-center gap-2 text-sv-muted hover:text-sv-text p-2 rounded-md transition-colors"
+              >
+                <div class="w-7 h-7 rounded-full bg-sv-border flex items-center justify-center text-white text-sm font-bold overflow-hidden">
+                  @if (activeProfile()?.avatarUrl) {
+                    <img [src]="activeProfile()!.avatarUrl" [alt]="activeProfile()!.name" class="w-full h-full object-cover" />
+                  } @else {
+                    {{ activeProfile()?.name?.charAt(0)?.toUpperCase() || '?' }}
+                  }
+                </div>
+                <span class="hidden md:inline text-sm">{{ activeProfile()?.name }}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              @if (showProfileMenu()) {
+                <div 
+                  class="fixed left-1/2 -translate-x-1/2 sm:absolute sm:left-auto sm:right-0 sm:translate-x-0 mt-2 w-[calc(100vw-2rem)] sm:w-56 max-w-sm bg-sv-dark border border-sv-border rounded-lg shadow-xl z-50 overflow-hidden"
+                  (click)="$event.stopPropagation()"
+                >
+                  <div class="px-4 py-3 border-b border-sv-border">
+                    <p class="text-white text-sm font-medium">Cambiar Perfil</p>
+                  </div>
+
+                  <div class="py-2 max-h-60 overflow-y-auto">
+                    @for (profile of profiles().data || []; track profile.id) {
+                      <button 
+                        (click)="switchProfile(profile)"
+                        class="w-full flex items-center gap-3 px-4 py-2 text-sv-muted hover:text-sv-text hover:bg-sv-card transition-colors text-sm"
+                        [class.text-sv-red]="activeProfile()?.id === profile.id"
+                      >
+                        <div class="w-6 h-6 rounded-full bg-sv-border flex items-center justify-center text-white text-xs font-bold overflow-hidden">
+                          @if (profile.avatarUrl) {
+                            <img [src]="profile.avatarUrl" [alt]="profile.name" class="w-full h-full object-cover" />
+                          } @else {
+                            {{ profile.name.charAt(0).toUpperCase() }}
+                          }
+                        </div>
+                        {{ profile.name }}
+                        @if (activeProfile()?.id === profile.id) {
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                          </svg>
+                        }
+                      </button>
+                    }
+                  </div>
+
+                  <div class="border-t border-sv-border py-2">
+                    <button 
+                      (click)="goToProfileSelect()"
+                      class="w-full flex items-center gap-3 px-4 py-2 text-sv-muted hover:text-sv-text hover:bg-sv-card transition-colors text-sm"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                      </svg>
+                      Elegir Perfil
+                    </button>
+                    <button 
+                      (click)="goToManageProfiles()"
+                      class="w-full flex items-center gap-3 px-4 py-2 text-sv-muted hover:text-sv-text hover:bg-sv-card transition-colors text-sm"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      Administrar Perfiles
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+
           <!-- User Menu -->
           <div class="relative">
             <button 
@@ -193,7 +272,7 @@
   </div>
 </nav>
 
-@if (showNotifications() || showUserMenu()) {
+@if (showNotifications() || showUserMenu() || showProfileMenu()) {
   <div 
     class="fixed inset-0 z-40" 
     (click)="closeDropdowns()"
