@@ -1,15 +1,18 @@
 <nav class="bg-sv-dark border-b border-sv-border">
   <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-14 sm:h-16">
-      <div class="flex items-center">
-        <a routerLink="/catalog" class="text-xl font-bold text-sv-red">StreamVault</a>
+      <div class="flex items-center gap-2">
+        <a routerLink="/catalog" class="text-lg sm:text-xl font-bold text-sv-red">SV<span class="hidden sm:inline">StreamVault</span></a>
         
         @if (isAuthenticated()) {
-          <div class="hidden md:flex ml-6 lg:ml-10 space-x-2 lg:space-x-4">
-            <a routerLink="/catalog" routerLinkActive="text-sv-red" class="text-sv-muted hover:text-sv-text px-2 lg:px-3 py-2 rounded-md text-sm">Catálogo</a>
-            <a routerLink="/catalog?type=movie" routerLinkActive="text-sv-red" class="text-sv-muted hover:text-sv-text px-2 lg:px-3 py-2 rounded-md text-sm">Películas</a>
-            <a routerLink="/catalog?type=series" routerLinkActive="text-sv-red" class="text-sv-muted hover:text-sv-text px-2 lg:px-3 py-2 rounded-md text-sm">Series</a>
-            <a routerLink="/search" routerLinkActive="text-sv-red" class="text-sv-muted hover:text-sv-text px-2 lg:px-3 py-2 rounded-md text-sm">Buscar</a>
+          <!-- Mobile horizontal scroll nav -->
+          <div class="flex-1 overflow-x-auto scrollbar-hide ml-2 pr-4">
+            <div class="flex items-center space-x-1 lg:space-x-4 w-max">
+              <a routerLink="/catalog" routerLinkActive="text-sv-red" class="text-sv-muted hover:text-sv-text px-2 lg:px-3 py-2 rounded-md text-sm whitespace-nowrap">Catálogo</a>
+              <a routerLink="/catalog?type=movie" routerLinkActive="text-sv-red" class="text-sv-muted hover:text-sv-text px-2 lg:px-3 py-2 rounded-md text-sm whitespace-nowrap">Películas</a>
+              <a routerLink="/catalog?type=series" routerLinkActive="text-sv-red" class="text-sv-muted hover:text-sv-text px-2 lg:px-3 py-2 rounded-md text-sm whitespace-nowrap">Series</a>
+              <a routerLink="/search" routerLinkActive="text-sv-red" class="text-sv-muted hover:text-sv-text px-2 lg:px-3 py-2 rounded-md text-sm whitespace-nowrap">Buscar</a>
+            </div>
           </div>
         }
       </div>
