@@ -32,7 +32,7 @@
 
             @if (showNotifications()) {
               <div 
-                class="absolute left-1/2 -translate-x-1/2 sm:left-auto sm:right-0 sm:translate-x-0 mt-2 w-72 sm:w-80 bg-sv-dark border border-sv-border rounded-lg shadow-xl z-50 overflow-hidden"
+                class="fixed left-1/2 -translate-x-1/2 sm:absolute sm:left-auto sm:right-0 sm:translate-x-0 mt-2 w-[calc(100vw-2rem)] sm:w-80 max-w-sm bg-sv-dark border border-sv-border rounded-lg shadow-xl z-50 overflow-hidden"
                 (click)="$event.stopPropagation()"
               >
                 <div class="flex items-center justify-between px-4 py-3 border-b border-sv-border">
@@ -134,7 +134,7 @@
 
             @if (showUserMenu()) {
               <div 
-                class="absolute left-1/2 -translate-x-1/2 sm:left-auto sm:right-0 sm:translate-x-0 mt-2 w-48 sm:w-56 bg-sv-dark border border-sv-border rounded-lg shadow-xl z-50 overflow-hidden"
+                class="fixed left-1/2 -translate-x-1/2 sm:absolute sm:left-auto sm:right-0 sm:translate-x-0 mt-2 w-[calc(100vw-2rem)] sm:w-56 max-w-sm bg-sv-dark border border-sv-border rounded-lg shadow-xl z-50 overflow-hidden"
                 (click)="$event.stopPropagation()"
               >
                 <div class="px-4 py-3 border-b border-sv-border">
