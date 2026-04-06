@@ -10,7 +10,10 @@ export const notifications = signal<Notification[]>([]);
 export const searchQuery = signal<string>('');
 
 export const isAuthenticated = computed(() => currentUser() !== null);
-export const isAdmin = computed(() => currentUser()?.role === 'ADMIN');
+export const isAdmin = computed(() => {
+  const role = currentUser()?.role?.toUpperCase();
+  return role === 'ADMIN' || role === 'ROLE_ADMIN' || role === 'ADMINISTRATOR';
+});
 export const unreadCount = computed(() => 
   notifications().filter(n => !n.isRead).length
 );
