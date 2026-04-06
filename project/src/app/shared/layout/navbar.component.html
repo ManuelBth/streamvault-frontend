@@ -5,9 +5,11 @@
         <a routerLink="/catalog" class="text-xl font-bold text-sv-red">StreamVault</a>
         
         @if (isAuthenticated()) {
-          <div class="hidden md:flex ml-10 space-x-4">
-            <a routerLink="/catalog" routerLinkActive="text-sv-red" class="text-sv-muted hover:text-sv-text px-3 py-2 rounded-md text-sm">Catálogo</a>
-            <a routerLink="/search" routerLinkActive="text-sv-red" class="text-sv-muted hover:text-sv-text px-3 py-2 rounded-md text-sm">Buscar</a>
+          <div class="hidden md:flex ml-6 lg:ml-10 space-x-2 lg:space-x-4">
+            <a routerLink="/catalog" routerLinkActive="text-sv-red" class="text-sv-muted hover:text-sv-text px-2 lg:px-3 py-2 rounded-md text-sm">Catálogo</a>
+            <a routerLink="/catalog?type=movie" routerLinkActive="text-sv-red" class="text-sv-muted hover:text-sv-text px-2 lg:px-3 py-2 rounded-md text-sm">Películas</a>
+            <a routerLink="/catalog?type=series" routerLinkActive="text-sv-red" class="text-sv-muted hover:text-sv-text px-2 lg:px-3 py-2 rounded-md text-sm">Series</a>
+            <a routerLink="/search" routerLinkActive="text-sv-red" class="text-sv-muted hover:text-sv-text px-2 lg:px-3 py-2 rounded-md text-sm">Buscar</a>
           </div>
         }
       </div>
