@@ -104,9 +104,9 @@ export type PaymentState = 'idle' | 'processing' | 'success' | 'error';
               <div class="success-state">
                 <div class="success-icon">✓</div>
                 <h2>¡Pago exitoso!</h2>
-                <p>Tu suscripción Premium está ahora activa</p>
+                <p>Tu suscripción {{ selectedPlan().name }} está ahora activa</p>
                 <div class="subscription-details">
-                  <p><strong>Plan:</strong> Premium</p>
+                  <p><strong>Plan:</strong> {{ selectedPlan().name }}</p>
                   <p><strong>Desde:</strong> {{ today | date:'dd/MM/yyyy' }}</p>
                   <p><strong>Hasta:</strong> {{ nextMonth | date:'dd/MM/yyyy' }}</p>
                 </div>
@@ -404,13 +404,15 @@ export class PaymentModalComponent {
   onSubmit(): void {
     if (!this.isFormValid()) return;
     
+    const planType = this.selectedPlan().id;
+    
     this.state.set('processing');
     
     // Emular procesamiento de pago (2 segundos)
     setTimeout(() => {
       const subscription: Subscription = {
         id: `sub-${Date.now()}`,
-        plan: 'PREMIUM',
+        plan: planType,
         startedAt: new Date().toISOString(),
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
         active: true

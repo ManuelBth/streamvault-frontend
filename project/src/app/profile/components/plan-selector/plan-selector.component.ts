@@ -57,9 +57,9 @@ import { Plan, Subscription } from '../../models/subscription.model';
     
     .plans-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 24px;
-      max-width: 800px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      max-width: 900px;
       margin: 0 auto;
     }
     
@@ -68,9 +68,10 @@ import { Plan, Subscription } from '../../models/subscription.model';
       background: linear-gradient(145deg, #1f1f1f 0%, #252525 100%);
       border: 1px solid #333;
       border-radius: 16px;
-      padding: 32px 24px;
+      padding: 24px 20px;
       display: flex;
       flex-direction: column;
+      min-height: 380px;
       transition: all 0.3s ease;
     }
     
@@ -96,12 +97,13 @@ import { Plan, Subscription } from '../../models/subscription.model';
       transform: translateX(-50%);
       background: #e50914;
       color: white;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
-      padding: 4px 16px;
+      padding: 4px 12px;
       border-radius: 20px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      white-space: nowrap;
     }
     
     .current-badge {
@@ -111,26 +113,27 @@ import { Plan, Subscription } from '../../models/subscription.model';
       transform: translateX(-50%);
       background: #22c55e;
       color: white;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
-      padding: 4px 16px;
+      padding: 4px 12px;
       border-radius: 20px;
+      white-space: nowrap;
     }
     
     .plan-name {
       color: white;
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 700;
-      margin: 8px 0;
+      margin: 12px 0 8px;
       text-align: center;
     }
     
     .plan-price {
       color: #e50914;
-      font-size: 32px;
+      font-size: 28px;
       font-weight: 800;
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
     
     .plan-card.popular .plan-price {
@@ -140,37 +143,40 @@ import { Plan, Subscription } from '../../models/subscription.model';
     .plan-features {
       list-style: none;
       padding: 0;
-      margin: 0 0 24px 0;
+      margin: 0 0 20px 0;
       flex: 1;
     }
     
     .plan-features li {
       display: flex;
-      align-items: center;
-      gap: 10px;
+      align-items: flex-start;
+      gap: 8px;
       color: #9ca3af;
-      font-size: 14px;
-      margin-bottom: 12px;
+      font-size: 13px;
+      margin-bottom: 10px;
+      line-height: 1.4;
     }
     
     .check-icon {
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
       color: #22c55e;
       flex-shrink: 0;
+      margin-top: 2px;
     }
     
     .select-btn {
       width: 100%;
-      padding: 14px 24px;
+      padding: 12px 20px;
       border-radius: 8px;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
       border: 2px solid #4b5563;
       background: transparent;
       color: white;
+      margin-top: auto;
     }
     
     .select-btn:hover:not(:disabled) {
