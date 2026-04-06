@@ -17,8 +17,7 @@ import { Notification } from '../../notifications/models/notification.model';
     CommonModule, 
     SendMessageModalComponent
   ],
-  templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.css'
+  templateUrl: './navbar.component.html'
 })
 export class NavbarComponent implements OnDestroy {
   private authService = inject(AuthService);
