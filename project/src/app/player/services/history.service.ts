@@ -4,6 +4,7 @@ import { Observable, catchError, throwError } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { HistoryRecord, CreateHistoryRequest, UpdateProgressRequest } from '../../shared/models/history.model';
+import { activeProfile } from '../../shared/store/app.store';
 
 export type HistoryState<T> = {
   state: 'idle' | 'loading' | 'success' | 'error';
@@ -60,11 +61,13 @@ export class HistoryService {
     });
   }
 
-  createHistoryRecord(episodeId: string, progressSec?: number, completed?: boolean): Observable<HistoryRecord> {
+  createHistoryRecord(episodeId: string, progressSec?: number, completed?: boolean, profileId?: string): Observable<HistoryRecord> {
+    const currentProfileId = profileId || activeProfile()?.id;
     const body: CreateHistoryRequest = {
       episodeId,
       ...(progressSec !== undefined && { progressSec }),
-      ...(completed !== undefined && { completed })
+      ...(completed !== undefined && { completed }),
+      ...(currentProfileId && { profileId: currentProfileId })
     };
 
     return this.http.post<HistoryRecord>(this.apiUrl, body).pipe(
@@ -75,19 +78,21 @@ export class HistoryService {
     );
   }
 
-  loadCreateHistoryRecord(episodeId: string, progressSec?: number, completed?: boolean): void {
+  loadCreateHistoryRecord(episodeId: string, progressSec?: number, completed?: boolean, profileId?: string): void {
     this._currentRecord.set({ state: 'loading', data: undefined });
 
-    this.createHistoryRecord(episodeId, progressSec, completed).subscribe({
+    this.createHistoryRecord(episodeId, progressSec, completed, profileId).subscribe({
       next: (record) => this._currentRecord.set({ state: 'success', data: record }),
       error: (err) => this._currentRecord.set({ state: 'error', error: err.message })
     });
   }
 
-  updateProgress(historyId: string, progressSec: number, completed?: boolean): Observable<HistoryRecord> {
+  updateProgress(historyId: string, progressSec: number, completed?: boolean, profileId?: string): Observable<HistoryRecord> {
+    const currentProfileId = profileId || activeProfile()?.id;
     const body: UpdateProgressRequest = {
       progressSec,
-      ...(completed !== undefined && { completed })
+      ...(completed !== undefined && { completed }),
+      ...(currentProfileId && { profileId: currentProfileId })
     };
 
     return this.http.put<HistoryRecord>(`${this.apiUrl}/${historyId}/progress`, body).pipe(
@@ -98,10 +103,10 @@ export class HistoryService {
     );
   }
 
-  loadUpdateProgress(historyId: string, progressSec: number, completed?: boolean): void {
+  loadUpdateProgress(historyId: string, progressSec: number, completed?: boolean, profileId?: string): void {
     this._currentRecord.set({ state: 'loading', data: undefined });
 
-    this.updateProgress(historyId, progressSec, completed).subscribe({
+    this.updateProgress(historyId, progressSec, completed, profileId).subscribe({
       next: (record) => this._currentRecord.set({ state: 'success', data: record }),
       error: (err) => this._currentRecord.set({ state: 'error', error: err.message })
     });

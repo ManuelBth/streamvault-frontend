@@ -10,8 +10,8 @@ export interface User {
 export interface Profile {
   id: string;
   name: string;
-  avatar?: string;
-  isMain: boolean;
+  avatarUrl: string | null;
+  createdAt: string;
 }
 
 export interface Notification {

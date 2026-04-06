@@ -11,9 +11,11 @@ export interface CreateHistoryRequest {
   episodeId: string;
   progressSec?: number;
   completed?: boolean;
+  profileId?: string;
 }
 
 export interface UpdateProgressRequest {
   progressSec: number;
   completed?: boolean;
+  profileId?: string;
 }
