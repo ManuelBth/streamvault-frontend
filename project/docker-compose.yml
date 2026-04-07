@@ -1,0 +1,30 @@
+name: streamvault-front
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: streamvault-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - API_URL=${API_URL:-http://localhost:8080/api/v1}
+      - WS_URL=${WS_URL:-ws://localhost:8080/ws}
+      - MINIO_URL=${MINIO_URL:-http://localhost:9000}
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    networks:
+      - streamvault-network
+
+networks:
+  streamvault-network:
+    name: streamvault-network

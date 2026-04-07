@@ -1,0 +1,39 @@
+# Node modules
+node_modules/
+
+# Build output
+dist/
+
+# Angular cache
+.angular/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment files with secrets
+.env
+
+# Git
+.git/
+.gitignore
+
+# Docker (el Dockerfile y docker-compose.yml sí deben incluirse)
+# docker-compose.yml
+# Dockerfile
+
+# Tests
+coverage/
+
+# Misc
+*.tsbuildinfo
