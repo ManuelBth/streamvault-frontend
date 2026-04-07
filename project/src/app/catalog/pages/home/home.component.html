@@ -1,0 +1,67 @@
+<div class="home-page">
+  <!-- Search Bar -->
+  <div class="search-section">
+    <app-search-bar
+      placeholder="Buscar películas, series..."
+      (onSearch)="onSearch($event)"
+    />
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>Cargando catálogo...</p>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (errorMessage()) {
+    <div class="error-container">
+      <p class="error-message">{{ errorMessage() }}</p>
+      <button class="retry-button" (click)="loadCatalog()">Reintentar</button>
+    </div>
+  }
+
+  <!-- Content -->
+  @if (!isLoading() && !errorMessage()) {
+    <!-- Hero / Featured Content -->
+    @if (featuredContent()) {
+      <app-hero
+        [content]="featuredContent()!"
+        (onSelect)="onContentSelect($event)"
+        (onPlay)="onContentPlay($event)"
+      />
+    }
+
+    <!-- Content Carousels by Genre -->
+    <div class="carousels-container">
+      @for (group of catalogGroups(); track group.genre) {
+        <app-carousel
+          [title]="group.genre"
+          [items]="group.contents"
+          [showArrows]="true"
+          (onSelect)="onContentSelect($event)"
+          (onPlay)="onContentPlay($event)"
+        />
+      } @empty {
+        @if (hasContent()) {
+          <app-carousel
+            title="Todo"
+            [items]="contents()"
+            [showArrows]="true"
+            (onSelect)="onContentSelect($event)"
+            (onPlay)="onContentPlay($event)"
+          />
+        }
+      }
+    </div>
+
+    <!-- Empty State -->
+    @if (!hasContent()) {
+      <div class="empty-container">
+        <p>No hay contenido disponible</p>
+      </div>
+    }
+  }
+</div>
