@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal, computed } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { environment } from '../../../environments/environment';
+import { ConfigService } from '../../shared/services/config.service';
 
 export interface MailRequest {
   to: string;
@@ -20,7 +20,8 @@ export type LoadingState<T> = {
 @Injectable({ providedIn: 'root' })
 export class MailService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/mail`;
+  private configService = inject(ConfigService);
+  private apiUrl = `${this.configService.apiUrl}/contact`;
 
   private _sending = signal<LoadingState<void>>({ state: 'idle', data: undefined });
   

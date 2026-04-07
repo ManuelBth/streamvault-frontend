@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable, signal, computed } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { environment } from '../../../environments/environment';
+import { ConfigService } from '../../shared/services/config.service';
 import { AdminUser, AdminUsersResponse } from '../models/admin-user.model';
 
 export type LoadingState<T> = {
@@ -14,7 +14,8 @@ export type LoadingState<T> = {
 @Injectable({ providedIn: 'root' })
 export class AdminUserService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/admin/users`;
+  private configService = inject(ConfigService);
+  private apiUrl = `${this.configService.apiUrl}/admin/users`;
 
   private _users = signal<LoadingState<AdminUsersResponse>>({ state: 'idle', data: undefined });
   private _currentUser = signal<LoadingState<AdminUser>>({ state: 'idle', data: undefined });

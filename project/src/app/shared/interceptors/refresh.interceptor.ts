@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { TokenService } from '../../auth/services/token.service';
 import { AuthService } from '../../auth/services/auth.service';
-import { environment } from '../../../environments/environment';
 
 export const refreshInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);

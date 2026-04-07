@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable, signal, computed } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { environment } from '../../../environments/environment';
+import { ConfigService } from '../../shared/services/config.service';
 import {
   ContentResponse,
   ContentListResponse,
@@ -21,8 +21,9 @@ export type LoadingState<T> = {
 @Injectable({ providedIn: 'root' })
 export class AdminContentService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/catalog`;
-  private uploadUrl = `${environment.apiUrl}/admin/upload/thumbnail`;
+  private configService = inject(ConfigService);
+  private apiUrl = `${this.configService.apiUrl}/catalog`;
+  private uploadUrl = `${this.configService.apiUrl}/admin/upload/thumbnail`;
 
   private _contents = signal<LoadingState<ContentListResponse>>({ state: 'idle', data: undefined });
   private _currentContent = signal<LoadingState<ContentResponse>>({ state: 'idle', data: undefined });
@@ -118,7 +119,7 @@ export class AdminContentService {
 
   // Obtener todos los géneros disponibles
   getGenres(): Observable<Genre[]> {
-    return this.http.get<Genre[]>(`${environment.apiUrl}/catalog/genres`);
+    return this.http.get<Genre[]>(`${this.configService.apiUrl}/catalog/genres`);
   }
 
   // Contar contenido por género a partir de los contenidos existentes

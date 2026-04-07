@@ -1,7 +1,7 @@
 import { inject, Injectable, signal, effect } from '@angular/core';
 import { Subject } from 'rxjs';
 
-import { environment } from '../../../environments/environment';
+import { ConfigService } from '../../shared/services/config.service';
 import { Notification } from '../models/notification.model';
 import { NotificationService } from '../../shared/services/notification.service';
 import { TokenService } from '../../auth/services/token.service';
@@ -10,10 +10,12 @@ import { WebSocketMessage } from '../models/websocket.model';
 
 @Injectable({ providedIn: 'root' })
 export class WebSocketNotificationService {
+  private configService = inject(ConfigService);
   private socket: WebSocket | null = null;
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 5;
   private reconnectDelay = 3000;
+  private wsUrl = this.configService.wsUrl;
   
   private _connected = signal<boolean>(false);
   private _messages = new Subject<Notification>();
@@ -49,7 +51,7 @@ export class WebSocketNotificationService {
 
     this.currentUserId = userId;
     
-    let wsUrl = environment.wsUrl;
+    let wsUrl = this.configService.wsUrl;
     if (!wsUrl.startsWith('ws')) {
       wsUrl = wsUrl.replace('http', 'ws');
     }

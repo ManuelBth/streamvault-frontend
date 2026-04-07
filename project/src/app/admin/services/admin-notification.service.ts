@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal, computed } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { environment } from '../../../environments/environment';
+import { ConfigService } from '../../shared/services/config.service';
 import { SendNotificationRequest, BroadcastNotificationRequest } from '../models/notification-request.model';
 
 export type LoadingState<T> = {
@@ -14,7 +14,8 @@ export type LoadingState<T> = {
 @Injectable({ providedIn: 'root' })
 export class AdminNotificationService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/admin/notifications`;
+  private configService = inject(ConfigService);
+  private apiUrl = `${this.configService.apiUrl}/admin/notifications`;
 
   private _lastSent = signal<LoadingState<void>>({ state: 'idle', data: undefined });
   private _lastBroadcast = signal<LoadingState<void>>({ state: 'idle', data: undefined });
