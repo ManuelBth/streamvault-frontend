@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable, signal, computed } from '@angular/core';
 import { Observable, catchError, throwError, Subject, debounceTime, EMPTY } from 'rxjs';
 
-import { environment } from '../../../environments/environment';
+import { ConfigService } from '../../shared/services/config.service';
 import { HistoryRecord, CreateHistoryRequest, UpdateProgressRequest } from '../../shared/models/history.model';
 import { activeProfile } from '../../shared/store/app.store';
 
@@ -15,7 +15,8 @@ export type HistoryState<T> = {
 @Injectable({ providedIn: 'root' })
 export class HistoryService {
   private http = inject(HttpClient);
-  private readonly apiUrl = `${environment.apiUrl}/history`;
+  private configService = inject(ConfigService);
+  private readonly apiUrl = `${this.configService.apiUrl}/history`;
 
   private _historyRecords = signal<HistoryState<HistoryRecord[]>>({ state: 'idle', data: undefined });
   private _currentRecord = signal<HistoryState<HistoryRecord>>({ state: 'idle', data: undefined });

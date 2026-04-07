@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal, computed } from '@angular/core';
 import { Observable, catchError, of, throwError } from 'rxjs';
 
-import { environment } from '../../../environments/environment';
+import { ConfigService } from '../../shared/services/config.service';
 import { StreamUrlResponse } from '../models/stream-url.response';
 
 export type LoadingState<T> = {
@@ -14,7 +14,8 @@ export type LoadingState<T> = {
 @Injectable({ providedIn: 'root' })
 export class StreamService {
   private http = inject(HttpClient);
-  private readonly apiUrl = `${environment.apiUrl}/stream`;
+  private configService = inject(ConfigService);
+  private readonly apiUrl = `${this.configService.apiUrl}/stream`;
 
   private _streamUrl = signal<LoadingState<StreamUrlResponse>>({ state: 'idle', data: undefined });
   private _episodeStreamUrl = signal<LoadingState<StreamUrlResponse>>({ state: 'idle', data: undefined });

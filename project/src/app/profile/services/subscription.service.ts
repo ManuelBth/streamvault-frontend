@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal, computed } from '@angular/core';
 import { Observable, of, delay } from 'rxjs';
 
-import { environment } from '../../../environments/environment';
+import { ConfigService } from '../../shared/services/config.service';
 import { Subscription, Plan, PlanType, AVAILABLE_PLANS } from '../models/subscription.model';
 
 export type LoadingState<T> = {
@@ -14,7 +14,8 @@ export type LoadingState<T> = {
 @Injectable({ providedIn: 'root' })
 export class SubscriptionService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/subscriptions`;
+  private configService = inject(ConfigService);
+  private apiUrl = `${this.configService.apiUrl}/subscriptions`;
 
   private _subscription = signal<LoadingState<Subscription | null>>({ state: 'idle', data: undefined });
   

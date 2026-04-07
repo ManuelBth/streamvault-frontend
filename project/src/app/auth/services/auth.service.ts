@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Observable, tap, switchMap, of, forkJoin } from 'rxjs';
 import { TokenService } from './token.service';
 import { setCurrentUser } from '../../shared/store/app.store';
-import { environment } from '../../../environments/environment';
+import { ConfigService } from '../../shared/services/config.service';
 
 // Importar tipos del models folder (auth-specific)
 import type { LoginRequest, RegisterRequest, AuthResponse } from '../models';
@@ -16,7 +16,8 @@ export class AuthService {
   private http = inject(HttpClient);
   private tokenService = inject(TokenService);
   private router = inject(Router);
-  private readonly apiUrl = environment.apiUrl; // Ya incluye /api/v1
+  private configService = inject(ConfigService);
+  private readonly apiUrl = this.configService.apiUrl;
 
   initializeAuth(): Observable<User | null> {
     const token = this.tokenService.getToken();

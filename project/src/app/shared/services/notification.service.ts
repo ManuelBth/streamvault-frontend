@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal, computed } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { environment } from '../../../environments/environment';
+import { ConfigService } from './config.service';
 import { Notification } from '../models';
 
 export type LoadingState<T> = {
@@ -14,7 +14,8 @@ export type LoadingState<T> = {
 @Injectable({ providedIn: 'root' })
 export class NotificationService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/notifications`;
+  private configService = inject(ConfigService);
+  private apiUrl = `${this.configService.apiUrl}/notifications`;
 
   private _notifications = signal<LoadingState<Notification[]>>({ state: 'idle', data: undefined });
   private _unreadCount = signal<number>(0);

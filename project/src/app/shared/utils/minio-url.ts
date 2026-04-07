@@ -1,4 +1,5 @@
-import { environment } from '../../../environments/environment';
+import { inject } from '@angular/core';
+import { ConfigService } from '../services/config.service';
 
 /**
  * Construye la URL completa para un thumbnail de MinIO
@@ -12,6 +13,9 @@ export function getThumbnailUrl(thumbnailKey: string | null | undefined): string
     return null;
   }
   
+  const configService = inject(ConfigService);
+  const minioBaseUrl = configService.minioUrl;
+  
   // Decodificar caracteres encoding si viene encoded
   let key = decodeURIComponent(thumbnailKey);
   
@@ -23,7 +27,7 @@ export function getThumbnailUrl(thumbnailKey: string | null | undefined): string
   // Eliminar cualquier / inicial para evitar doble slash
   const cleanKey = key.startsWith('/') ? key.substring(1) : key;
   
-  return `${environment.minioPublicUrl}${cleanKey}`;
+  return `${minioBaseUrl}/streamvault-thumbnails/${cleanKey}`;
 }
 
 /**

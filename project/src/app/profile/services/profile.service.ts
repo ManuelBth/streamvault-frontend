@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal, computed } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 
-import { environment } from '../../../environments/environment';
+import { ConfigService } from '../../shared/services/config.service';
 import { Profile, CreateProfileRequest, UpdateProfileRequest } from '../models/profile.model';
 import { setActiveProfile } from '../../shared/store/app.store';
 
@@ -17,7 +17,8 @@ const PROFILE_STORAGE_KEY = 'streamvault_active_profile';
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/profiles`;
+  private configService = inject(ConfigService);
+  private apiUrl = `${this.configService.apiUrl}/profiles`;
 
   // Estado de perfiles
   private _profiles = signal<LoadingState<Profile[]>>({ state: 'idle', data: undefined });

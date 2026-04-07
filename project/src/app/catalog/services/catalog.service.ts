@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable, signal, computed } from '@angular/core';
 import { Observable, catchError, of } from 'rxjs';
 
-import { environment } from '../../../environments/environment';
+import { ConfigService } from '../../shared/services/config.service';
 import { Content, CatalogResponse, ContentDetailResponse } from '../models/content.model';
 import { Season } from '../models/season.model';
 import { Episode } from '../models/episode.model';
@@ -20,7 +20,8 @@ export type LoadingState<T> = {
 @Injectable({ providedIn: 'root' })
 export class CatalogService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/catalog`;
+  private configService = inject(ConfigService);
+  private apiUrl = `${this.configService.apiUrl}/catalog`;
 
   // State signals with proper typing
   private _catalog = signal<LoadingState<CatalogResponse>>({ state: 'idle', data: undefined });

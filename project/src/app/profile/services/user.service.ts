@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal, computed } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { environment } from '../../../environments/environment';
+import { ConfigService } from '../../shared/services/config.service';
 import { User } from '../../shared/models';
 
 export type LoadingState<T> = {
@@ -24,7 +24,8 @@ export interface ChangePasswordRequest {
 @Injectable({ providedIn: 'root' })
 export class UserService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/users`;
+  private configService = inject(ConfigService);
+  private apiUrl = `${this.configService.apiUrl}/users`;
 
   private _currentUser = signal<LoadingState<User>>({ state: 'idle', data: undefined });
   
