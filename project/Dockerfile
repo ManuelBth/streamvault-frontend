@@ -6,7 +6,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 
-# Copy source
+# Copy source (from project directory)
 COPY . .
 
 # Build Angular app
@@ -18,8 +18,8 @@ FROM nginx:alpine
 # Copy custom nginx config
 COPY nginx.conf /etc/nginx/nginx.conf
 
-# Copy Angular build output
-COPY --from=build /app/dist/streamvault-front/browser /usr/share/nginx/html
+# Copy Angular build output (note: build output is in dist/streamvault)
+COPY --from=build /app/dist/streamvault/browser /usr/share/nginx/html
 
 # Create config directory
 RUN mkdir -p /usr/share/nginx/html/config
