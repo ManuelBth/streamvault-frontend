@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 export type UserRole = 'ADMIN' | 'USER' | 'GUEST';
@@ -13,12 +13,12 @@ export type UserRole = 'ADMIN' | 'USER' | 'GUEST';
 export class BadgeRoleComponent {
   role = input.required<UserRole>();
   
-  get label(): string {
+  label = computed(() => {
     switch (this.role()) {
       case 'ADMIN': return 'Administrador';
       case 'USER': return 'Usuario';
       case 'GUEST': return 'Invitado';
       default: return this.role();
     }
-  }
+  });
 }

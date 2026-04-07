@@ -1,6 +1,6 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { AuthService } from '../../services/auth.service';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
@@ -13,7 +13,7 @@ type ConfirmEmailState =
 @Component({
   selector: 'app-confirm-email',
   standalone: true,
-  imports: [CommonModule, RouterLink, LoadingSpinnerComponent],
+  imports: [CommonModule, LoadingSpinnerComponent],
   templateUrl: './confirm-email.component.html',
   styleUrl: './confirm-email.component.scss'
 })

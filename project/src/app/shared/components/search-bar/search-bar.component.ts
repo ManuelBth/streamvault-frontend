@@ -1,6 +1,7 @@
-import { Component, input, output, signal, Subject } from '@angular/core';
+import { Component, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
@@ -23,7 +24,7 @@ export class SearchBarComponent {
     this.searchSubject.pipe(
       debounceTime(this.debounce()),
       distinctUntilChanged()
-    ).subscribe((value) => {
+    ).subscribe((value: string) => {
       this.onSearch.emit(value);
     });
   }
