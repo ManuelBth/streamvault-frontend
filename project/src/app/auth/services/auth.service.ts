@@ -90,4 +90,8 @@ export class AuthService {
   refreshToken(): Observable<{ token: string }> {
     return this.http.post<{ token: string }>(`${this.apiUrl}/auth/refresh`, {});
   }
+
+  confirmEmail(token: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/auth/confirm-email`, { token });
+  }
 }
