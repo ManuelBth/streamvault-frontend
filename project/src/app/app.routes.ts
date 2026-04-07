@@ -28,8 +28,19 @@ export const routes: Routes = [
         path: 'register',
         loadComponent: () => import('./auth/pages/register/register.component').then(m => m.RegisterComponent),
         title: 'Registrarse | StreamVault'
+      },
+      {
+        path: 'confirm',
+        loadComponent: () => import('./auth/pages/confirm-email/confirm-email.component').then(m => m.ConfirmEmailPageComponent)
       }
     ]
+  },
+
+  // ── Home público (outside MainLayout, no auth required) ───
+  {
+    path: 'home',
+    loadComponent: () => import('./catalog/pages/home/home.component').then(m => m.HomePageComponent),
+    title: 'StreamVault | Tu plataforma de streaming'
   },
 
   // ── Raíz: redirect to catalog (authenticated) ───────────────

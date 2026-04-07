@@ -13,6 +13,10 @@ export const AUTH_ROUTES: Routes = [
     canActivate: [guestGuard]
   },
   {
+    path: 'confirm',
+    loadComponent: () => import('./pages/confirm-email/confirm-email.component').then(m => m.ConfirmEmailPageComponent)
+  },
+  {
     path: 'login',
     redirectTo: '',
     pathMatch: 'full'
