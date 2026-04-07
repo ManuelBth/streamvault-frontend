@@ -5,16 +5,22 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 import { routes } from './app.routes';
+import { ConfigService } from './shared/services/config.service';
+import { AuthService } from './auth/services/auth.service';
 import { authInterceptor } from './shared/interceptors/auth.interceptor';
 import { refreshInterceptor } from './shared/interceptors/refresh.interceptor';
 import { errorInterceptor } from './shared/interceptors/error.interceptor';
 import { loadingInterceptor } from './shared/interceptors/loading.interceptor';
-import { AuthService } from './auth/services/auth.service';
 
-export function initializeApp(authService: AuthService): () => Observable<any> {
-  return () => authService.initializeAuth();
+export function initializeConfig(configService: ConfigService): () => Promise<void> {
+  return () => configService.loadConfig();
+}
+
+export function initializeApp(configService: AuthService): () => Observable<any> {
+  return () => configService.initializeAuth();
 }
 
 export const appConfig: ApplicationConfig = {
@@ -40,6 +46,12 @@ export const appConfig: ApplicationConfig = {
         }
       }
     }),
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeConfig,
+      deps: [ConfigService],
+      multi: true
+    },
     {
       provide: APP_INITIALIZER,
       useFactory: initializeApp,
