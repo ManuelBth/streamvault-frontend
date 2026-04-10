@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CatalogService } from '../../services/catalog.service';
 import { Content } from '../../models/content.model';
 import { getThumbnailUrl } from '../../../shared/utils/minio-url';
+import { ConfigService } from '../../../shared/services/config.service';
 
 @Component({
   selector: 'app-movie-detail',
@@ -16,13 +17,14 @@ export class MovieDetailComponent implements OnInit {
   private catalogService = inject(CatalogService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private configService = inject(ConfigService);
 
   content = signal<Content | null>(null);
   loading = signal<boolean>(true);
   error = signal<string | null>(null);
 
-  thumbnailUrl = () => getThumbnailUrl(this.content()?.thumbnailKey);
-  backdropUrl = () => getThumbnailUrl(this.content()?.thumbnailKey);
+  thumbnailUrl = () => getThumbnailUrl(this.content()?.thumbnailKey, this.configService.minioUrl);
+  backdropUrl = () => getThumbnailUrl(this.content()?.thumbnailKey, this.configService.minioUrl);
 
   ngOnInit(): void {
     this.loadContent();

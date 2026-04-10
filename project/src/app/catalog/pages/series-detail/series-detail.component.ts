@@ -7,6 +7,7 @@ import { Content } from '../../models/content.model';
 import { Season } from '../../models/season.model';
 import { Episode } from '../../models/episode.model';
 import { getThumbnailUrl } from '../../../shared/utils/minio-url';
+import { ConfigService } from '../../../shared/services/config.service';
 
 @Component({
   selector: 'app-series-detail',
@@ -19,6 +20,7 @@ export class SeriesDetailComponent implements OnInit {
   private catalogService = inject(CatalogService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private configService = inject(ConfigService);
 
   content = signal<Content | null>(null);
   seasons = signal<Season[]>([]);
@@ -27,8 +29,8 @@ export class SeriesDetailComponent implements OnInit {
   error = signal<string | null>(null);
   selectedSeasonIndex = signal<number>(0);
 
-  thumbnailUrl = () => getThumbnailUrl(this.content()?.thumbnailKey);
-  backdropUrl = () => getThumbnailUrl(this.content()?.thumbnailKey);
+  thumbnailUrl = () => getThumbnailUrl(this.content()?.thumbnailKey, this.configService.minioUrl);
+  backdropUrl = () => getThumbnailUrl(this.content()?.thumbnailKey, this.configService.minioUrl);
 
   selectedSeasonEpisodes = computed(() => {
     const episodes = this.episodes();
@@ -123,7 +125,7 @@ export class SeriesDetailComponent implements OnInit {
   }
 
   getEpisodeThumbnail(episode: Episode): string {
-    return getThumbnailUrl(episode.thumbnailKey) || '/assets/images/placeholder-poster.jpg';
+    return getThumbnailUrl(episode.thumbnailKey, this.configService.minioUrl) || '/assets/images/placeholder-poster.jpg';
   }
 
   formatDuration(seconds: number): string {

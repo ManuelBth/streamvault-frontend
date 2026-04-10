@@ -1,20 +1,15 @@
-import { inject } from '@angular/core';
-import { ConfigService } from '../services/config.service';
-
 /**
  * Construye la URL completa para un thumbnail de MinIO
  * El bucket streamvault-thumbnails está configurado como público (read-only)
  * 
  * @param thumbnailKey - La clave del thumbnail devuelta por la API (ej: "Peliculas/Maquina-De-Guerra.jpg" o "streamvault-thumbnails/Peliculas/...")
+ * @param minioBaseUrl - URL base de MinIO (opcional,默认值: http://localhost:9000)
  * @returns URL completa para acceder a la imagen, o null si no hay clave
  */
-export function getThumbnailUrl(thumbnailKey: string | null | undefined): string | null {
+export function getThumbnailUrl(thumbnailKey: string | null | undefined, minioBaseUrl: string = 'http://localhost:9000'): string | null {
   if (!thumbnailKey) {
     return null;
   }
-  
-  const configService = inject(ConfigService);
-  const minioBaseUrl = configService.minioUrl;
   
   // Decodificar caracteres encoding si viene encoded
   let key = decodeURIComponent(thumbnailKey);
@@ -33,10 +28,11 @@ export function getThumbnailUrl(thumbnailKey: string | null | undefined): string
 /**
  * Construye la URL para el backdrop (imagen de fondo más grande)
  * @param thumbnailKey - La clave del thumbnail
+ * @param minioBaseUrl - URL base de MinIO (opcional)
  * @returns URL del backdrop o null
  */
-export function getBackdropUrl(thumbnailKey: string | null | undefined): string | null {
-  const url = getThumbnailUrl(thumbnailKey);
+export function getBackdropUrl(thumbnailKey: string | null | undefined, minioBaseUrl: string = 'http://localhost:9000'): string | null {
+  const url = getThumbnailUrl(thumbnailKey, minioBaseUrl);
   if (!url) return null;
   
   // Agregar parámetro para obtener imagen de mayor resolución si está disponible
