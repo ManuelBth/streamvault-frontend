@@ -2,9 +2,7 @@ name: streamvault-front
 
 services:
   frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/${IMAGE_REPO:-manuelbth/streamvault}:latest
     container_name: streamvault-frontend
     restart: unless-stopped
     ports:
@@ -24,6 +22,19 @@ services:
       start_period: 10s
     networks:
       - streamvault-network
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: streamvault-watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_INTERVAL=30
+      - WATCHTOWER_CONTAINER_PATTERN=streamvault-frontend
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_INCLUDE_STOPPED=true
+      - WATCHTOWER_NOTIFICATIONS=disabled
+    restart: unless-stopped
 
 networks:
   streamvault-network:
