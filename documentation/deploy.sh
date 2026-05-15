@@ -29,6 +29,40 @@ MINIO_URL=""
 PORT=80
 
 #------------------------------------------------------------------------------
+# Cargar variables de entorno desde .env (solo si no están definidas)
+#------------------------------------------------------------------------------
+load_env_file() {
+    local env_file="$(dirname "$0")/.env"
+
+    if [ -f "$env_file" ]; then
+        log_info "Cargando variables desde $env_file..."
+        # Leer cada línea del .env y solo asignar si la variable está vacía
+        while IFS='=' read -r key value; do
+            # Ignorar comentarios y líneas vacías
+            [[ "$key" =~ ^[[:space:]]*# ]] && continue
+            [[ -z "$key" ]] && continue
+
+            # Quitar espacios en blanco alrededor
+            key=$(echo "$key" | xargs)
+            value=$(echo "$value" | xargs)
+
+            # Solo asignar si la variable de окружения está vacía
+            case "$key" in
+                API_URL)      [ -z "$API_URL" ] && API_URL="$value" ;;
+                WS_URL)       [ -z "$WS_URL" ] && WS_URL="$value" ;;
+                MINIO_URL)    [ -z "$MINIO_URL" ] && MINIO_URL="$value" ;;
+                PORT)         [ -z "$PORT" ] && PORT="$value" ;;
+                IMAGE_NAME|IMAGE_REPO)
+                              [ -z "$IMAGE_NAME" ] && IMAGE_NAME="$value" ;;
+            esac
+        done < "$env_file"
+        log_success "Variables cargadas"
+    else
+        log_warn "No se encontró archivo .env en $(dirname "$0")"
+    fi
+}
+
+#------------------------------------------------------------------------------
 # Funciones de utilidad
 #------------------------------------------------------------------------------
 
@@ -135,16 +169,22 @@ setup_network() {
 
 deploy() {
     print_banner
-    
+
+    # Cargar .env si existe (argumentos de línea de comandos tienen prioridad)
+    load_env_file
+
     # Verificar Docker
     check_docker
-    
+
     # Setup red
     setup_network
-    
+
     # Verificar que tenemos la API URL
     if [ -z "$API_URL" ]; then
-        log_error "Debes especificar --api-url"
+        log_error "Debes especificar --api-url o crear un archivo .env"
+        echo ""
+        echo "Ejemplo de uso:"
+        echo "  $0 --api-url http://mi-backend:8080/api/v1"
         echo ""
         show_help
         exit 1
@@ -207,6 +247,9 @@ deploy() {
 # Manejo de argumentos
 #------------------------------------------------------------------------------
 
+# Primero guardamos los argumentos originales para poder reprocesarlos
+ARGUMENTS=("$@")
+
 while [[ $# -gt 0 ]]; do
     case $1 in
         --api-url)
@@ -241,4 +284,8 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+# Cargar .env (sobrescribe variables SOLO si están vacías)
+load_env_file
+
+# Los argumentos de línea de comandos ya fueron parseados y tienen prioridad
 deploy
